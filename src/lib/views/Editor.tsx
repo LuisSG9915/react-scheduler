@@ -60,6 +60,12 @@ const initialState = (fields: FieldProps[], event?: StateEvent): Record<string, 
       type: "input",
       config: { label: "Title", required: true, min: 3 },
     },
+    description: {
+      value: event?.description || "",
+      validity: !!event?.description,
+      type: "input",
+      config: { label: "Description", required: false, min: 3 },
+    },
     start: {
       value: event?.start || new Date(),
       validity: true,

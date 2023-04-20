@@ -49,6 +49,7 @@ export interface CellRenderedProps {
 interface CalendarEvent {
   event_id: number | string;
   title: string;
+  description?: string;
   start: Date;
   end: Date;
   disabled?: boolean;
@@ -69,6 +70,7 @@ export interface Translations {
   };
   event: Record<string, string> & {
     title: string;
+    description: string;
     start: string;
     end: string;
     allDay: string;
