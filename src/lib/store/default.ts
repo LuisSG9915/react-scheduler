@@ -62,6 +62,7 @@ const defaultTranslations = (trans: Partial<SchedulerProps["translations"]> = {}
     event: Object.assign(
       {
         title: "Title",
+        description: "Description",
         start: "Start",
         end: "End",
         allDay: "All Day",
@@ -93,7 +94,7 @@ export const defaultProps = (props: Partial<SchedulerProps>) => {
     view: initialView,
     ...Object.assign(
       {
-        height: 600,
+        height: 900,
         navigation: true,
         selectedDate: new Date(),
         disableViewNavigator: false,

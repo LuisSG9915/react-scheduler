@@ -77,7 +77,7 @@ export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?:
         position: "sticky",
         left: 0,
         zIndex: 999,
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("md")]: {
           writingMode: "vertical-rl",
         },
       },

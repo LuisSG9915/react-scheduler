@@ -124,6 +124,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
               editable={editable}
             />
           </div>
+          {/* COMPONENTE CARD ON PRESS */}
           {viewerTitleComponent instanceof Function ? (
             viewerTitleComponent(event)
           ) : (
@@ -132,6 +133,8 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
             </Typography>
           )}
         </div>
+        {/* COMPONENTE CARD ON PRESS */}
+
         <div style={{ padding: "5px 10px" }}>
           <Typography
             style={{ display: "flex", alignItems: "center", gap: 8 }}
@@ -206,7 +209,12 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           <Typography style={{ fontSize: 11 }} noWrap>
             {`${format(event.start, hFormat, {
               locale,
-            })} - ${format(event.end, hFormat, { locale })}`}
+            })} - ${format(event.end, hFormat, { locale })} `}
+          </Typography>
+        )}
+        {showdate && (
+          <Typography style={{ fontSize: 11 }} noWrap>
+            {`${event.description}`}
           </Typography>
         )}
       </div>

@@ -1,0 +1,86 @@
+{
+  "events": [
+    {
+      "event_id": 1,
+      "title": "Event 1",
+      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-21T17:00:00.000Z",
+      "end": "2023-04-21T18:00:00.000Z",
+      "admin_id": 1,
+      "color": "green"
+    },
+    {
+      "event_id": 1,
+      "title": "Event 1",
+      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-21T16:00:00.000Z",
+      "end": "2023-04-21T17:00:00.000Z",
+      "admin_id": 1,
+      "color": "purple"
+    },
+    {
+      "event_id": 2,
+      "title": "Event 2",
+      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-21T16:00:00.000Z",
+      "end": "2023-04-21T17:00:00.000Z",
+      "admin_id": 2,
+      "color": "red"
+    },
+    {
+      "event_id": 3,
+      "title": "Event 3",
+      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-21T16:00:00.000Z",
+      "end": "2023-04-21T17:30:00.000Z",
+      "admin_id": 3,
+      "color": "pink"
+    },
+    {
+      "event_id": 4,
+      "title": "Lunch",
+      "description": "-",
+      "start": "2023-04-21T19:00:00.000Z",
+      "end": "2023-04-21T20:00:00.000Z",
+      "admin_id": 3,
+      "color": "grey"
+    },
+    {
+      "event_id": 4,
+      "title": "Lunch",
+      "description": "-",
+      "start": "2023-04-21T19:00:00.000Z",
+      "end": "2023-04-21T20:00:00.000Z",
+      "admin_id": 2,
+      "color": "grey"
+    },
+    {
+      "event_id": 4,
+      "title": "Lunch",
+      "description": "-",
+      "start": "2023-04-21T19:00:00.000Z",
+      "end": "2023-04-21T20:00:00.000Z",
+      "admin_id": 1,
+      "color": "grey"
+    },
+    {
+      "event_id": 4,
+      "title": "Lunch",
+      "description": "-",
+      "start": "2023-04-21T19:00:00.000Z",
+      "end": "2023-04-21T20:00:00.000Z",
+      "admin_id": 4,
+      "color": "grey"
+    },
+    {
+      "id": 1,
+      "event_id": 5,
+      "title": "wewef",
+      "description": "few",
+      "start": "2023-04-21T16:00:00.000Z",
+      "end": "2023-04-21T16:30:00.000Z",
+      "admin_id": 4,
+      "color": "blue"
+    }
+  ]
+}

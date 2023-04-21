@@ -2,11 +2,11 @@ export const EVENTS = [
   {
     event_id: 1,
     title: "Event 1",
-    description: "Corte y confección",
-    start: new Date(new Date(new Date().setHours(9)).setMinutes(30)),
+    description: "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
+    start: new Date(new Date(new Date().setHours(10)).setMinutes(0)),
     end: new Date(new Date(new Date().setHours(10)).setMinutes(30)),
     admin_id: 1,
-    color: "green",
+    color: "pink",
   },
   {
     event_id: 2,
@@ -113,29 +113,29 @@ export const EVENTS = [
 export const RESOURCES = [
   {
     admin_id: 1,
-    title: "John",
-    mobile: "555666777",
+    title: "Juana",
+    mobile: "Estilista 1",
     avatar: "https://picsum.photos/200/300",
     // color: "#ab2d2d"
   },
   {
     admin_id: 2,
     title: "Sarah",
-    mobile: "545678354",
+    mobile: "Estilista 2",
     avatar: "https://picsum.photos/200/300",
     // color: "#58ab2d"
   },
   {
     admin_id: 3,
-    title: "Joseph",
-    mobile: "543678433",
+    title: "Maria",
+    mobile: "Estilista 3",
     avatar: "https://picsum.photos/200/300",
     // color: "#a001a2"
   },
   {
     admin_id: 4,
-    title: "Mera",
-    mobile: "507487620",
+    title: "Merari",
+    mobile: "Estilista 4",
     avatar: "https://picsum.photos/200/300",
     // color: "#08c5bd"
   },

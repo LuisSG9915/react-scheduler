@@ -71,6 +71,7 @@ const Day = () => {
   );
   const CELL_HEIGHT = calcCellHeight(height, hours.length);
   const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step);
+  // Acceso al formato de la
   const hFormat = hourFormat === "12" ? "hh:mm a" : "HH:mm";
   const { headersRef, bodyRef } = useSyncScroll();
 
@@ -168,7 +169,7 @@ const Day = () => {
 
             return (
               <Fragment key={i}>
-                {/* Time Cells */}
+                {/* Time Cells rs_time: tiempo celda */}
                 <span className="rs__cell rs__header rs__time" style={{ height: CELL_HEIGHT }}>
                   <Typography variant="caption">{format(h, hFormat, { locale })}</Typography>
                 </span>

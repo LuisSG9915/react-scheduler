@@ -50,8 +50,8 @@ interface CalendarEvent {
   event_id: number | string;
   title: string;
   description?: string;
-  start: Date;
-  end: Date;
+  start: any;
+  end: any;
   disabled?: boolean;
   color?: string;
   editable?: boolean;
