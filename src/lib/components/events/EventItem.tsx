@@ -188,7 +188,15 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     // Check if has custom render event method
     // only applicable to non-multiday events and not in month-view
     if (typeof eventRenderer === "function" && !multiday && view !== "month") {
-      const custom = eventRenderer({ event, onClick: triggerViewer, ...dragProps });
+      const custom = eventRenderer({
+        event,
+        onClick: triggerViewer,
+        ...dragProps,
+        event_id: undefined,
+        start: undefined,
+        title: undefined,
+        end: undefined,
+      });
       if (custom) {
         return (
           <EventItemPapper
@@ -256,7 +264,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
         disabled={event.disabled}
       >
         <ButtonBase
-          onClick={(e) => {
+          onClick={(e: MouseEvent<Element, globalThis.MouseEvent> | undefined | any) => {
             e.preventDefault();
             e.stopPropagation();
             triggerViewer(e);

@@ -65,14 +65,7 @@ const EventActions = ({ event, onDelete, onEdit, direction, editable, deletable 
         timeout={400}
         exit={false}
       >
-        <div>
-          <Button className="delete" size="small" onClick={handleDelete}>
-            {translations.form.delete.toUpperCase()}
-          </Button>
-          <Button className="cancel" size="small" onClick={() => setDeleteConfirm(false)}>
-            {translations.form.cancel.toUpperCase()}
-          </Button>
-        </div>
+        <div></div>
       </Slide>
     </Actions>
   );

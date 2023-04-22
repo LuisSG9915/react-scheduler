@@ -86,6 +86,10 @@ export interface EventRendererProps
     React.HTMLAttributes<HTMLElement>,
     "draggable" | "onDragStart" | "onDragEnd" | "onDragOver" | "onDragEnter" | "onClick"
   > {
+  event_id: any;
+  start: any;
+  title: any;
+  end: any;
   event: ProcessedEvent;
 }
 export interface FieldInputProps {

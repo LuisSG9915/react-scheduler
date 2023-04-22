@@ -1,8 +1,7 @@
 import { Scheduler } from "./lib";
 import { useRef, Fragment, useState, useEffect } from "react";
 import { SchedulerRef, ProcessedEvent, EventActions } from "./lib/types";
-import { EVENTS, RESOURCES } from "./data";
-import useStore from "./lib/hooks/useStore";
+import { RESOURCES } from "./data";
 import axios from "axios";
 
 function App() {
@@ -122,6 +121,8 @@ function App() {
           onConfirm={handleConfirmEvent}
           // onDelete={handleDeleteEvent}
           deletable={false}
+          view={"day"}
+          height={2}
           // editable={false}
           onEventDrop={handleDropEvent}
           events={formattedDatas}
