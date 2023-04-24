@@ -42,7 +42,7 @@ const Navigation = () => {
 
   const handleSelectedDateChange = (date: Date) => {
     handleState(date, "selectedDate");
-
+    console.log(date);
     if (onSelectedDateChange && typeof onSelectedDateChange === "function") {
       onSelectedDateChange(date);
     }
@@ -94,6 +94,7 @@ const Navigation = () => {
         alignItems: "center",
       }}
     >
+      {/* Navegación de las fechas */}
       <div data-testid="date-navigator">{navigation && renderDateSelector()}</div>
 
       <div

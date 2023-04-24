@@ -12,6 +12,7 @@ import EventActions from "./Actions";
 import { differenceInDaysOmitTime } from "../../helpers/generals";
 import useStore from "../../hooks/useStore";
 import useDragAttributes from "../../hooks/useDragAttributes";
+import axios from "axios";
 
 interface EventItemProps {
   event: ProcessedEvent;
@@ -66,6 +67,10 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     try {
       triggerLoading(true);
       let deletedId = event.event_id;
+      axios
+        .delete(`http://localhost:3000/events/${event.event_id}`)
+        .then(() => console.log("EVENTO BORRADA"))
+        .catch((e) => console.log(e));
       // Trigger custom/remote when provided
       if (onDelete) {
         const remoteId = await onDelete(deletedId);

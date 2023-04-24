@@ -1,84 +1,172 @@
 {
   "events": [
     {
-      "event_id": 1,
-      "title": "Event 1",
-      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-04-21T17:00:00.000Z",
-      "end": "2023-04-21T18:00:00.000Z",
-      "admin_id": 1,
-      "color": "green"
-    },
-    {
-      "event_id": 1,
-      "title": "Event 1",
-      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-04-21T16:00:00.000Z",
-      "end": "2023-04-21T17:00:00.000Z",
-      "admin_id": 1,
-      "color": "purple"
-    },
-    {
+      "id": 2,
       "event_id": 2,
       "title": "Event 2",
-      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-04-21T16:00:00.000Z",
-      "end": "2023-04-21T17:00:00.000Z",
+      "description": "Cte: Mary martine, /n Corte de Dama y Alaciado, Con Judith /n nuevo",
+      "start": "2023-04-24T10:00:00.000",
+      "end": "2023-04-24T11:00:00.000",
+      "admin_id": 1,
+      "color": "blue"
+    },
+    {
+      "id": 3,
+      "event_id": 3,
+      "title": "Event 3",
+      "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-24T10:00:00.000",
+      "end": "2023-04-24T11:00:00.000",
       "admin_id": 2,
       "color": "red"
     },
     {
-      "event_id": 3,
+      "id": 4,
+      "event_id": 4,
+      "title": "No disponible",
+      "description": "-",
+      "start": "2023-04-24T11:00:00.000",
+      "end": "2023-04-24T11:30:00.000",
+      "admin_id": 2,
+      "color": "purple"
+    },
+    {
+      "id": 5,
+      "event_id": 5,
       "title": "Event 3",
-      "description": "Cte: Mary martinez, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-04-21T16:00:00.000Z",
-      "end": "2023-04-21T17:30:00.000Z",
+      "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-24T16:00:00.000",
+      "end": "2023-04-24T17:30:00.000",
       "admin_id": 3,
       "color": "pink"
     },
     {
-      "event_id": 4,
+      "id": 6,
+      "event_id": 6,
+      "title": "No disponible",
+      "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
+      "start": "2023-04-24T17:30:00.000",
+      "end": "2023-04-24T18:30:00.000",
+      "admin_id": 3,
+      "color": "purple"
+    },
+    {
+      "id": 7,
+      "event_id": 7,
       "title": "Lunch",
       "description": "-",
-      "start": "2023-04-21T19:00:00.000Z",
-      "end": "2023-04-21T20:00:00.000Z",
+      "start": "2023-04-24T19:00:00.000",
+      "end": "2023-04-24T20:00:00.000",
       "admin_id": 3,
       "color": "grey"
     },
     {
-      "event_id": 4,
+      "id": 8,
+      "event_id": 8,
       "title": "Lunch",
       "description": "-",
-      "start": "2023-04-21T19:00:00.000Z",
-      "end": "2023-04-21T20:00:00.000Z",
+      "start": "2023-04-24T19:00:00.000",
+      "end": "2023-04-24T20:00:00.000",
       "admin_id": 2,
       "color": "grey"
     },
     {
-      "event_id": 4,
+      "id": 9,
+      "event_id": 9,
       "title": "Lunch",
       "description": "-",
-      "start": "2023-04-21T19:00:00.000Z",
-      "end": "2023-04-21T20:00:00.000Z",
+      "start": "2023-04-24T19:00:00.000",
+      "end": "2023-04-24T20:00:00.000",
       "admin_id": 1,
       "color": "grey"
     },
     {
-      "event_id": 4,
+      "id": 10,
+      "event_id": 10,
+      "title": "Corte de uñas",
+      "description": "-",
+      "start": "2023-04-24T18:00:00.000",
+      "end": "2023-04-24T18:30:00.000",
+      "admin_id": 1,
+      "color": "black"
+    },
+    {
+      "id": 11,
+      "event_id": 11,
+      "title": "Alaciado permanente",
+      "description": "-",
+      "start": "2023-04-24T18:30:00.000",
+      "end": "2023-04-24T19:00:00.000",
+      "admin_id": 1,
+      "color": "brown"
+    },
+    {
+      "id": 12,
+      "event_id": 12,
+      "title": "Alaciado permanente",
+      "description": "-",
+      "start": "2023-04-24T18:30:00.000",
+      "end": "2023-04-24T19:00:00.000",
+      "admin_id": 1,
+      "color": "brown"
+    },
+    {
+      "id": 13,
+      "event_id": 13,
+      "title": "Pintar cabello",
+      "description": "-",
+      "start": "2023-04-24T20:00:00.000",
+      "end": "2023-04-24T20:15:00.000",
+      "admin_id": 1,
+      "color": "black"
+    },
+    {
+      "id": 14,
+      "event_id": 14,
+      "title": "Pedicura",
+      "description": "-",
+      "start": "2023-04-24T20:15:00.000",
+      "end": "2023-04-24T20:30:00.000",
+      "admin_id": 1,
+      "color": "red"
+    },
+    {
+      "id": 15,
+      "event_id": 15,
+      "title": "Mechas",
+      "description": "-",
+      "start": "2023-04-24T20:30:00.000",
+      "end": "2023-04-24T20:45:00.000",
+      "admin_id": 1,
+      "color": "blue"
+    },
+    {
+      "id": 16,
+      "event_id": 16,
       "title": "Lunch",
       "description": "-",
-      "start": "2023-04-21T19:00:00.000Z",
-      "end": "2023-04-21T20:00:00.000Z",
+      "start": "2023-04-24T19:00:00.000",
+      "end": "2023-04-24T20:00:00.000",
       "admin_id": 4,
       "color": "grey"
     },
     {
-      "id": 1,
-      "event_id": 5,
+      "id": 17,
+      "event_id": 17,
+      "title": "No disponible",
+      "description": "-",
+      "start": "2023-04-24T21:00:00.000",
+      "end": "2023-04-24T24:00:00.000",
+      "admin_id": 1,
+      "color": "purple"
+    },
+    {
+      "id": 18,
+      "event_id": 18,
       "title": "wewef",
       "description": "few",
-      "start": "2023-04-21T16:00:00.000Z",
-      "end": "2023-04-21T16:30:00.000Z",
+      "start": "2023-04-24T16:00:00.000",
+      "end": "2023-04-24T16:30:00.000",
       "admin_id": 4,
       "color": "blue"
     }

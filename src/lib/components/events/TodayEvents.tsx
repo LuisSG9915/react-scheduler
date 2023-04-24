@@ -80,6 +80,7 @@ const TodayEvents = ({
                   : "",
             }}
           >
+            {/* MIS EVENTOS */}
             <EventItem event={event} />
           </div>
         );

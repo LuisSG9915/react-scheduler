@@ -1,6 +1,16 @@
 import { Scheduler } from "./lib";
 import { useRef, Fragment, useState, useEffect } from "react";
 import { SchedulerRef, ProcessedEvent, EventActions } from "./lib/types";
+import {
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
+
 import { RESOURCES } from "./data";
 import axios from "axios";
 
@@ -19,7 +29,12 @@ function App() {
   const calendarRef = useRef<SchedulerRef>(null);
   const [datas, setDatas] = useState<Eventos[]>([]);
   const [formattedDatas, setFormattedDatas] = useState<Eventos[]>([]);
+  const [mode, setMode] = useState<"default" | "tabs">("default");
+  const [age, setAge] = useState("");
 
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value as string);
+  };
   const peticion = async () => {
     try {
       const response = await axios.get("http://localhost:3000/events");
@@ -71,8 +86,8 @@ function App() {
     }
     if (action === "edit") {
       const editEvent: Eventos = {
-        id: 1,
-        event_id: 5,
+        id: event.event_id,
+        event_id: event.event_id,
         title: event.title,
         description: event.description,
         start: event.start,
@@ -81,7 +96,7 @@ function App() {
         color: "blue",
       };
       axios
-        .put<Eventos>("http://localhost:3000/events", editEvent)
+        .put<Eventos>(`http://localhost:3000/events/${event.event_id}`, editEvent)
         .then(() => console.log("exitoso"))
         .catch((e) => console.log(e));
     }
@@ -107,7 +122,53 @@ function App() {
 
   return (
     <Fragment>
-      <div style={{ textAlign: "center" }}></div>
+      <div style={{ textAlign: "center", width: 150 }}>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Sucursal</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={age}
+            label="Sucursal"
+            onChange={handleChange}
+          >
+            <MenuItem value={10}>Mexico</MenuItem>
+            <MenuItem value={20}>Monterrey</MenuItem>
+            <MenuItem value={30}>Bodega</MenuItem>
+          </Select>
+        </FormControl>
+        {/* <Button
+          color={mode === "default" ? "primary" : "inherit"}
+          variant={mode === "default" ? "contained" : "text"}
+          size="small"
+          onClick={() => {
+            setMode("default");
+            calendarRef.current?.scheduler?.handleState(
+              "default",
+              "resourceViewMode"
+            );
+          }}
+        >
+          Default
+        </Button>
+        <Button
+          color={mode === "tabs" ? "primary" : "inherit"}
+          variant={mode === "tabs" ? "contained" : "text"}
+          size="small"
+          onClick={() => {
+            setMode("tabs");
+            calendarRef.current?.scheduler?.handleState(
+              "tabs",
+              "resourceViewMode"
+            );
+          }}
+        >
+          Tabs
+        </Button> */}
+      </div>
+      <div>
+        <Button onClick={() => peticion()}>Refresh Info</Button>
+      </div>
       {formattedDatas.length > 2 ? (
         <Scheduler
           day={{
@@ -120,9 +181,10 @@ function App() {
           onEventClick={(a) => console.log(a)}
           onConfirm={handleConfirmEvent}
           // onDelete={handleDeleteEvent}
-          deletable={false}
+          // deletable={false}
           view={"day"}
           height={2}
+          timeZone="America/Mexico_City"
           // editable={false}
           onEventDrop={handleDropEvent}
           events={formattedDatas}
