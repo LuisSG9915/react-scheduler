@@ -8,7 +8,7 @@
       "start": "2023-04-24T10:00:00.000",
       "end": "2023-04-24T11:00:00.000",
       "admin_id": 1,
-      "color": "blue"
+      "color": "grey"
     },
     {
       "id": 3,
@@ -33,12 +33,12 @@
     {
       "id": 5,
       "event_id": 5,
-      "title": "Event 3",
-      "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-04-24T16:00:00.000",
-      "end": "2023-04-24T17:30:00.000",
-      "admin_id": 3,
-      "color": "pink"
+      "title": "asd",
+      "description": "adsdas",
+      "start": "2023-04-24T16:00:00.000Z",
+      "end": "2023-04-24T18:30:00.000Z",
+      "admin_id": 4,
+      "color": "blue"
     },
     {
       "id": 6,
@@ -168,6 +168,16 @@
       "start": "2023-04-24T16:00:00.000",
       "end": "2023-04-24T16:30:00.000",
       "admin_id": 4,
+      "color": "blue"
+    },
+    {
+      "id": 1,
+      "event_id": 5,
+      "title": "asd",
+      "description": "adsdas",
+      "start": "2023-04-24T16:00:00.000Z",
+      "end": "2023-04-24T16:30:00.000Z",
+      "admin_id": 3,
       "color": "blue"
     }
   ]

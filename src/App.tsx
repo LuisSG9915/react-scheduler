@@ -43,9 +43,6 @@ function App() {
       console.error(error);
     }
   };
-  // const eliminar = async (id: any) => {
-  //   axios.delete("http://localhost:3000/events", id).then(() => console.log("done"));
-  // };
 
   useEffect(() => {
     peticion();
@@ -58,7 +55,6 @@ function App() {
       end: new Date(evento.end),
     }));
     setFormattedDatas(formattedData);
-    console.log(formattedDatas);
   }, [datas]);
 
   const handleConfirmEvent = async (
@@ -103,6 +99,33 @@ function App() {
     return event;
   };
 
+  const peticiones = () => {
+    axios
+      .get("http://localhost:3000/events") // cambiar la URL de acuerdo a tu API
+      .then((response) => {
+        const formattedData = datas.map((evento: Eventos) => ({
+          ...evento,
+          start: new Date(evento.start),
+          end: new Date(evento.end),
+        }));
+        setFormattedDatas(formattedData);
+        console.log("peticiones");
+      })
+      .catch((error) => console.error(error));
+  };
+
+  // const asyncPetición = async() =>{
+  //   peticion();
+  //       const formattedData = datas.map((evento: Eventos) => ({
+  //     ...evento,
+  //     start: new Date(evento.start),
+  //     end: new Date(evento.end),
+  //   }));
+  //   setFormattedDatas(formattedData);
+  //   console.log(formattedDatas);
+
+  // };
+
   // const handleDeleteEvent = async (idEvent: string | number) => {
   //   // Lógica para manejar la confirmación de eventos
   //   console.log("Evento  idEvent", idEvent);
@@ -137,16 +160,13 @@ function App() {
             <MenuItem value={30}>Bodega</MenuItem>
           </Select>
         </FormControl>
-        {/* <Button
+        <Button
           color={mode === "default" ? "primary" : "inherit"}
           variant={mode === "default" ? "contained" : "text"}
           size="small"
           onClick={() => {
             setMode("default");
-            calendarRef.current?.scheduler?.handleState(
-              "default",
-              "resourceViewMode"
-            );
+            calendarRef.current?.scheduler?.handleState("default", "resourceViewMode");
           }}
         >
           Default
@@ -157,17 +177,15 @@ function App() {
           size="small"
           onClick={() => {
             setMode("tabs");
-            calendarRef.current?.scheduler?.handleState(
-              "tabs",
-              "resourceViewMode"
-            );
+            calendarRef.current?.scheduler?.handleState("tabs", "resourceViewMode");
           }}
         >
           Tabs
-        </Button> */}
+        </Button>
       </div>
       <div>
-        <Button onClick={() => peticion()}>Refresh Info</Button>
+        {/* <Button onClick={ peticion}>Refresh Component</Button> */}
+        <Button onClick={peticiones}>Refresh Component</Button>
       </div>
       {formattedDatas.length > 2 ? (
         <Scheduler
