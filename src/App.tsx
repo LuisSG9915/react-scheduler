@@ -31,6 +31,7 @@ function App() {
   const [formattedDatas, setFormattedDatas] = useState<Eventos[]>([]);
   const [mode, setMode] = useState<"default" | "tabs">("default");
   const [age, setAge] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0); // Nuevo estado local
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
@@ -99,21 +100,21 @@ function App() {
     return event;
   };
 
-  const peticiones = () => {
-    axios
-      .get("http://localhost:3000/events") // cambiar la URL de acuerdo a tu API
-      .then((response) => {
-        const formattedData = datas.map((evento: Eventos) => ({
-          ...evento,
-          start: new Date(evento.start),
-          end: new Date(evento.end),
-        }));
-        setFormattedDatas(formattedData);
-        console.log("peticiones");
-      })
-      .catch((error) => console.error(error));
+  const peticiones = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/events"); // cambiar la URL de acuerdo a tu API
+      const formattedData = response.data.map((evento: Eventos) => ({
+        ...evento,
+        start: new Date(evento.start),
+        end: new Date(evento.end),
+      }));
+      setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+      setFormattedDatas(formattedData);
+      console.log("peticiones");
+    } catch (error) {
+      console.error(error);
+    }
   };
-
   // const asyncPetición = async() =>{
   //   peticion();
   //       const formattedData = datas.map((evento: Eventos) => ({
@@ -189,6 +190,7 @@ function App() {
       </div>
       {formattedDatas.length > 2 ? (
         <Scheduler
+          key={refreshKey}
           day={{
             step: 30,
             startHour: 10,
