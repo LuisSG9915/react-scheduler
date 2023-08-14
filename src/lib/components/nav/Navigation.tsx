@@ -42,7 +42,7 @@ const Navigation = () => {
 
   const handleSelectedDateChange = (date: Date) => {
     handleState(date, "selectedDate");
-    console.log(date);
+    // console.log(date);
     if (onSelectedDateChange && typeof onSelectedDateChange === "function") {
       onSelectedDateChange(date);
     }

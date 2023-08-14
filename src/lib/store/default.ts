@@ -51,20 +51,20 @@ const defaultTranslations = (trans: Partial<SchedulerProps["translations"]> = {}
     ),
     form: Object.assign(
       {
-        addTitle: "Add Event",
-        editTitle: "Edit Event",
-        confirm: "Confirm",
-        delete: "Delete",
+        addTitle: "Agregar cita",
+        editTitle: "Edita la cita",
+        confirm: "Confirmación",
+        delete: "Eliminar",
         cancel: "Cancel",
       },
       form
     ),
     event: Object.assign(
       {
-        title: "Title",
-        description: "Description",
-        start: "Start",
-        end: "End",
+        title: "Titulo",
+        description: "Cliente",
+        start: "Inicio",
+        end: "Final",
         allDay: "All Day",
       },
       event

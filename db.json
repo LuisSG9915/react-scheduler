@@ -1,59 +1,49 @@
 {
   "events": [
     {
-      "id": 2,
-      "event_id": 2,
-      "title": "Event 2",
-      "description": "Cte: Mary martine, /n Corte de Dama y Alaciado, Con Judith /n nuevo",
-      "start": "2023-05-08T10:00:00.000",
-      "end": "2023-05-08T11:00:00.000",
-      "admin_id": 1,
-      "color": "grey"
-    },
-    {
       "id": 200,
       "event_id": 2,
-      "title": "Event 2",
+      "title": "Mechas ",
       "description": "Cte: Mary martine, /n Corte de Dama y Alaciado, Con Judith /n nuevo",
-      "start": "2023-05-08T12:00:00.000",
-      "end": "2023-05-08T13:00:00.000",
+      "start": "2023-06-22T12:00:00.000",
+      "end": "2023-06-22T13:00:00.000",
       "admin_id": 1,
-      "color": "grey"
+      "color": "green"
     },
     {
       "id": 3,
       "event_id": 3,
       "title": "Event 3",
       "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
-      "start": "2023-05-08T10:00:00.000",
-      "end": "2023-05-08T11:00:00.000",
+      "start": "2023-06-22T10:00:00.000",
+      "end": "2023-06-22T11:00:00.000",
       "admin_id": 2,
-      "color": "red"
+      "color": "pink"
     },
     {
       "id": 4,
       "event_id": 4,
-      "title": "No disponible",
+      "title": "Corte de cabello y mechas",
       "description": "-",
-      "start": "2023-05-08T11:00:00.000",
-      "end": "2023-05-08T11:30:00.000",
-      "admin_id": 2,
+      "start": "2023-06-22T10:00:00.000",
+      "end": "2023-06-22T11:30:00.000",
+      "admin_id": 3,
       "color": "purple"
     },
     {
       "id": 5,
       "event_id": 5,
-      "title": "asd",
+      "title": "Corte de dama",
       "description": "adsdas",
-      "start": "2023-05-08T16:00:00.000Z",
-      "end": "2023-05-08T18:30:00.000Z",
-      "admin_id": 4,
+      "start": "2023-06-22T12:00:00.000",
+      "end": "2023-06-22T14:30:00.000",
+      "admin_id": 3,
       "color": "blue"
     },
     {
       "id": 6,
       "event_id": 6,
-      "title": "No disponible",
+      "title": "Corte y Mechas",
       "description": "Cte: Mary martine, Corte de Dama y Alaciado, Con Judith",
       "start": "2023-05-08T17:30:00.000",
       "end": "2023-05-08T18:30:00.000",
@@ -61,34 +51,24 @@
       "color": "purple"
     },
     {
-      "id": 7,
-      "event_id": 7,
-      "title": "Lunch",
-      "description": "-",
-      "start": "2023-05-08T19:00:00.000",
-      "end": "2023-05-08T20:00:00.000",
-      "admin_id": 3,
-      "color": "grey"
-    },
-    {
       "id": 8,
       "event_id": 8,
       "title": "Lunch",
       "description": "-",
-      "start": "2023-05-08T19:00:00.000",
-      "end": "2023-05-08T20:00:00.000",
-      "admin_id": 2,
+      "start": "2023-06-20T14:30:00.000",
+      "end": "2023-06-20T15:30:00.000",
+      "admin_id": 3,
       "color": "grey"
     },
     {
       "id": 9,
       "event_id": 9,
-      "title": "Lunch",
+      "title": "Rayos",
       "description": "-",
-      "start": "2023-05-08T19:00:00.000",
-      "end": "2023-05-08T20:00:00.000",
-      "admin_id": 1,
-      "color": "grey"
+      "start": "2023-06-20T13:00:00.000",
+      "end": "2023-06-20T14:00:00.000",
+      "admin_id": 2,
+      "color": "pink"
     },
     {
       "id": 10,
@@ -106,7 +86,7 @@
       "title": "Alaciado permanente",
       "description": "-",
       "start": "2023-05-08T18:30:00.000",
-      "end": "2023-05-08T19:00:00.000",
+      "end": "2023-05-08T20:00:00.000",
       "admin_id": 1,
       "color": "brown"
     },
@@ -115,8 +95,8 @@
       "event_id": 12,
       "title": "Alaciado permanente",
       "description": "-",
-      "start": "2023-05-08T18:30:00.000",
-      "end": "2023-05-08T19:00:00.000",
+      "start": "2023-06-20T18:30:00.000",
+      "end": "2023-06-20T20:00:00.000",
       "admin_id": 1,
       "color": "brown"
     },
@@ -125,8 +105,8 @@
       "event_id": 13,
       "title": "Pintar cabello",
       "description": "-",
-      "start": "2023-05-08T20:00:00.000",
-      "end": "2023-05-08T20:15:00.000",
+      "start": "2023-06-20T13:00:00.000",
+      "end": "2023-06-20T13:14:00.000",
       "admin_id": 1,
       "color": "black"
     },
@@ -135,10 +115,10 @@
       "event_id": 14,
       "title": "Pedicura",
       "description": "-",
-      "start": "2023-05-08T20:15:00.000",
-      "end": "2023-05-08T20:30:00.000",
+      "start": "2023-06-22T14:15:00.000",
+      "end": "2023-06-22T15:30:00.000",
       "admin_id": 1,
-      "color": "red"
+      "color": "blue"
     },
     {
       "id": 15,
@@ -151,23 +131,13 @@
       "color": "blue"
     },
     {
-      "id": 16,
-      "event_id": 16,
-      "title": "Lunch",
-      "description": "-",
-      "start": "2023-05-08T19:00:00.000",
-      "end": "2023-05-08T20:00:00.000",
-      "admin_id": 4,
-      "color": "grey"
-    },
-    {
       "id": 17,
       "event_id": 17,
       "title": "No disponible",
       "description": "-",
-      "start": "2023-05-08T21:00:00.000",
-      "end": "2023-05-08T24:00:00.000",
-      "admin_id": 1,
+      "start": "2023-06-22T10:00:00.000",
+      "end": "2023-06-22T11:00:00.000",
+      "admin_id": 4,
       "color": "purple"
     },
     {
@@ -181,13 +151,23 @@
       "color": "blue"
     },
     {
+      "id": 5000,
+      "event_id": 5000,
+      "title": "2 Cortes de dama y 2 Mechas",
+      "description": "-",
+      "start": "2023-06-22T12:00:00.000Z",
+      "end": "2023-06-22T14:30:00.000Z",
+      "admin_id": 3,
+      "color": "blue"
+    },
+    {
       "id": 1,
       "event_id": 5,
-      "title": "asd",
-      "description": "adsdas",
-      "start": "2023-05-08T16:00:00.000Z",
-      "end": "2023-05-08T16:30:00.000Z",
-      "admin_id": 3,
+      "title": "Corte de Dama y Alaciado, Con Judith",
+      "description": "LUIS ALBERTO",
+      "start": "2023-07-07T16:00:00.000Z",
+      "end": "2023-07-07T17:40:00.000Z",
+      "admin_id": 93,
       "color": "blue"
     }
   ]

@@ -235,11 +235,7 @@ const Editor = () => {
     );
   };
 
-  return (
-    <Dialog open={dialog} fullScreen={isMobile} maxWidth={dialogMaxWidth}>
-      {renderEditor()}
-    </Dialog>
-  );
+  return <Dialog open={dialog}>{renderEditor()}</Dialog>;
 };
 
 export default Editor;

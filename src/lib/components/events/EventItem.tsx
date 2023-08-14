@@ -134,7 +134,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
             viewerTitleComponent(event)
           ) : (
             <Typography style={{ padding: "5px 0" }} noWrap>
-              {event.title}
+              {event.description}
             </Typography>
           )}
         </div>
@@ -215,9 +215,10 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
     let item = (
       <div style={{ padding: "2px 6px" }}>
-        <Typography variant="subtitle2" style={{ fontSize: 12 }} noWrap>
-          {event.title}
+        <Typography style={{ fontSize: 11 }} noWrap>
+          {`${event.description}`}
         </Typography>
+
         {showdate && (
           <Typography style={{ fontSize: 11 }} noWrap>
             {`${format(event.start, hFormat, {
@@ -226,8 +227,8 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           </Typography>
         )}
         {showdate && (
-          <Typography style={{ fontSize: 11 }} noWrap>
-            {`${event.description}`}
+          <Typography variant="subtitle2" style={{ fontSize: 12 }} noWrap>
+            {/* {event.title} */}
           </Typography>
         )}
       </div>
