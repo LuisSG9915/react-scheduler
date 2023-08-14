@@ -1,29 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useNavigation } from "react-router-dom";
-import {
-  Navbar,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  Collapse,
-  NavbarToggler,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText,
-  Container,
-  CardHeader,
-  Card,
-  ListGroup,
-  ListGroupItem,
-  Button,
-} from "reactstrap";
+
 import Swal from "sweetalert2";
 // import "../../css/sidebar.css";
 // import "../../css/reportes.css";
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button } from "@mui/material";
 
 const SidebarHorizontal = () => {
   // const [isOpen, setIsOpen] = useState(false);
