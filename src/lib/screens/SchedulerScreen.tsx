@@ -90,12 +90,9 @@ function SchedulerScreen() {
   const [modalServicioEdit, setModalServicioEdit] = useState(false);
   const [modalServiciosAgregar, setModalServiciosAgregar] = useState(false);
   const [modalProductoSelect, setModalProductoSelect] = useState(false);
-  const clavesEmpleados = ["B2", "B3"];
-  useEffect(() => {
-    peticionEstilista();
+  const clavesEmpleados = ["B55", "B71", "B76", "B80", "B82", "B85", "B90"];
+  const clavesEmpleadosCB = ["B55", "B82", "B90", "B71", "B85"];
 
-    // peticiones() porque no lo uso, no sé
-  }, []);
   const { dataClientes } = useClientes();
   const { dataProductos4 } = useProductosFiltradoExistenciaProducto({
     descripcion: "%",
@@ -175,7 +172,9 @@ function SchedulerScreen() {
 
   const peticionEstilista = async () => {
     try {
-      const response = await axios.get("http://cbinfo.no-ip.info:9089/Trabajador?id=0");
+      const response = await axios.get(
+        `http://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}`
+      );
       const reponseTemporal = response.data;
       const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
         ...evento,
@@ -183,10 +182,11 @@ function SchedulerScreen() {
         title: evento?.nombre ? evento?.nombre : "",
         mobile: evento?.descripcion_puesto ? evento?.descripcion_puesto : "",
       }));
-      const elementosFiltrados = formattedData.filter((elemento: EstilistaResponse) =>
-        clavesEmpleados.includes(elemento.clave_empleado)
-      );
-      setDatasEstilista(elementosFiltrados);
+      // const elementosFiltrados = formattedData.filter((elemento: EstilistaResponse) =>
+      //   clavesEmpleados.includes(elemento.clave_empleado)
+      // );
+      setDatasEstilista(formattedData);
+      setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
     } catch (error) {
       console.error(error);
     }
@@ -511,7 +511,11 @@ function SchedulerScreen() {
   useEffect(() => {
     peticiones();
   }, [dataEvent.sucursal]);
+  useEffect(() => {
+    peticionEstilista();
 
+    // peticiones() porque no lo uso, no sé
+  }, [idSuc, dataEvent.sucursal]);
   return (
     <Fragment>
       {/* <SidebarHorizontal></SidebarHorizontal> */}

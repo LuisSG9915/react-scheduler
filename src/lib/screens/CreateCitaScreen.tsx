@@ -85,10 +85,6 @@ function CreateCitaScreen() {
       idRec: Number(idRec),
       idSuc: Number(idSuc),
     });
-
-    if (!datosParametros.idSuc) {
-      alert("Favor de ingresar en la página principal");
-    }
   }, []);
 
   const postCita = () => {
