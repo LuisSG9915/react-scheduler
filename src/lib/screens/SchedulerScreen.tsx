@@ -171,24 +171,26 @@ function SchedulerScreen() {
   };
 
   const peticionEstilista = async () => {
-    try {
-      const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}`
-      );
-      const reponseTemporal = response.data;
-      const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
-        ...evento,
-        admin_id: evento?.id ? evento?.id : 0,
-        title: evento?.nombre ? evento?.nombre : "",
-        mobile: evento?.descripcion_puesto ? evento?.descripcion_puesto : "",
-      }));
-      // const elementosFiltrados = formattedData.filter((elemento: EstilistaResponse) =>
-      //   clavesEmpleados.includes(elemento.clave_empleado)
-      // );
-      setDatasEstilista(formattedData);
-      // setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
-    } catch (error) {
-      console.error(error);
+    if (dataEvent.sucursal !== 0) {
+      try {
+        const response = await axios.get(
+          `http://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}`
+        );
+        const reponseTemporal = response.data;
+        const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
+          ...evento,
+          admin_id: evento?.id ? evento?.id : 0,
+          title: evento?.nombre ? evento?.nombre : "",
+          mobile: evento?.descripcion_puesto ? evento?.descripcion_puesto : "",
+        }));
+        // const elementosFiltrados = formattedData.filter((elemento: EstilistaResponse) =>
+        //   clavesEmpleados.includes(elemento.clave_empleado)
+        // );
+        setDatasEstilista(formattedData);
+        // setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -286,52 +288,53 @@ function SchedulerScreen() {
   };
 
   const peticiones = async () => {
-    peticionEstilista();
-    const temp = new Date(nuevaFechaPrueba);
-    const formattedDate = format(temp, "yyyyMMdd");
-    try {
-      const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
-          dataEvent.sucursal ? dataEvent.sucursal : 21
-        }&estilista=%&f1=${formattedDate}&f2=${formattedDate}&cliente=%&estatus=%`
-      );
-      const formattedData = response.data.map((evento: Eventos) => ({
-        ...evento,
-        start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
-        end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
-        admin_id: evento.idEstilista ? evento.idEstilista : 3,
-        event_id: evento.id ? evento.id : 0,
-        title: evento.idCliente.toString() + "," + evento.tiempo + "," + evento.idEstilista,
-        description: evento.nombreCliente,
-        color:
-          evento.estatus === 1
-            ? "#46e09b"
-            : evento.estatus === 2
-            ? "green"
-            : evento.estatus === 3
-            ? "grey"
-            : evento.estatus === 4
-            ? "pink"
-            : evento.estatus === 5
-            ? "lightblue"
-            : evento.estatus === 6
-            ? "purple"
-            : evento.estatus === 7
-            ? "lightblue"
-            : evento.estatus === 8
-            ? "yellow"
-            : "lightblue",
-      }));
-      setTimeout(() => {
-        setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
-      }, 1000);
-      setFormattedDatas(formattedData);
-      changeLoadingValue(false);
+    peticionEstilista().then(async () => {
+      const temp = new Date(nuevaFechaPrueba);
+      const formattedDate = format(temp, "yyyyMMdd");
+      try {
+        const response = axios.get(
+          `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
+            dataEvent.sucursal ? dataEvent.sucursal : 21
+          }&estilista=%&f1=${formattedDate}&f2=${formattedDate}&cliente=%&estatus=%`
+        );
+        const formattedData = (await response).data.map((evento: Eventos) => ({
+          ...evento,
+          start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
+          end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
+          admin_id: evento.idEstilista ? evento.idEstilista : 3,
+          event_id: evento.id ? evento.id : 0,
+          title: evento.idCliente.toString() + "," + evento.tiempo + "," + evento.idEstilista,
+          description: evento.nombreCliente,
+          color:
+            evento.estatus === 1
+              ? "#46e09b"
+              : evento.estatus === 2
+              ? "green"
+              : evento.estatus === 3
+              ? "grey"
+              : evento.estatus === 4
+              ? "pink"
+              : evento.estatus === 5
+              ? "lightblue"
+              : evento.estatus === 6
+              ? "purple"
+              : evento.estatus === 7
+              ? "lightblue"
+              : evento.estatus === 8
+              ? "yellow"
+              : "lightblue",
+        }));
+        setTimeout(() => {
+          setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+        }, 1000);
+        setFormattedDatas(formattedData);
+        changeLoadingValue(false);
 
-      console.log("peticiones");
-    } catch (error) {
-      console.error(error);
-    }
+        console.log("peticiones");
+      } catch (error) {
+        console.error(error);
+      }
+    });
   };
   const postCita = (idUsuario: number) => {
     axios
@@ -480,7 +483,7 @@ function SchedulerScreen() {
   const ligaLocal = "http://localhost:3000/";
 
   const handleOpenNewWindow = () => {
-    const url = `${ligaProductiva}Cliente`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}Cliente`; // Reemplaza esto con la URL que desees abrir
     const width = 500;
     const height = 1500;
     const left = (window.screen.width - width) / 2;
@@ -489,7 +492,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
-    const url = `${ligaProductiva}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1000;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -498,7 +501,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCitaScreen = ({ idCita, idUser, idCliente, fecha }) => {
-    const url = `${ligaProductiva}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1200;
     const height = 1200;
     const left = (window.screen.width - width) / 2;
