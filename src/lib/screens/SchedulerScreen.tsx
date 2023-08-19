@@ -186,7 +186,7 @@ function SchedulerScreen() {
       //   clavesEmpleados.includes(elemento.clave_empleado)
       // );
       setDatasEstilista(formattedData);
-      setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+      // setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
     } catch (error) {
       console.error(error);
     }
@@ -286,6 +286,7 @@ function SchedulerScreen() {
   };
 
   const peticiones = async () => {
+    peticionEstilista();
     const temp = new Date(nuevaFechaPrueba);
     const formattedDate = format(temp, "yyyyMMdd");
     try {
@@ -321,7 +322,9 @@ function SchedulerScreen() {
             ? "yellow"
             : "lightblue",
       }));
-      setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+      setTimeout(() => {
+        setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+      }, 1000);
       setFormattedDatas(formattedData);
       changeLoadingValue(false);
 
@@ -515,7 +518,7 @@ function SchedulerScreen() {
     peticionEstilista();
 
     // peticiones() porque no lo uso, no sé
-  }, [idSuc, dataEvent.sucursal]);
+  }, [idSuc, dataEvent.sucursal, !datasEstilista]);
   return (
     <Fragment>
       {/* <SidebarHorizontal></SidebarHorizontal> */}

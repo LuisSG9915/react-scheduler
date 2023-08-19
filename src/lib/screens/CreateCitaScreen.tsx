@@ -155,7 +155,7 @@ function CreateCitaScreen() {
     inventariable: 0,
     obsoleto: 0,
     servicio: 1,
-    sucursal: datosParametros.idSuc,
+    sucursal: Number(idSuc),
   });
   const columnsProductos4: GridColDef[] = [
     { field: "descripcion", headerName: "Descripcion", width: 200 },
