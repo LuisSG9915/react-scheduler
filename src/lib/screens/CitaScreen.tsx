@@ -50,12 +50,12 @@ function CitaScreen() {
     const idUser = new URLSearchParams(window.location.search).get("idUser");
     const idCliente = new URLSearchParams(window.location.search).get("idCliente");
     const fecha = new URLSearchParams(window.location.search).get("fecha");
+    const idSuc = new URLSearchParams(window.location.search).get("idSuc");
     const cadenaClienteTiempo = idCliente.split(",");
     const idClienteSeparada = cadenaClienteTiempo[0];
     const tiempoSeparada = cadenaClienteTiempo[1];
     const estilistaSeparada = cadenaClienteTiempo[2];
     const idRec = new URLSearchParams(window.location.search).get("idRec");
-    const idSuc = new URLSearchParams(window.location.search).get("idSuc");
 
     const getCiaForeignKey = () => {
       const cliente = dataClientes.find((cia: Cliente) => cia.id_cliente === Number(idCliente));
@@ -204,7 +204,7 @@ function CitaScreen() {
     insumo: 0,
     inventariable: 0,
     obsoleto: 0,
-    servicio: 1,
+    servicio: 2,
     sucursal: datosParametros.idSuc,
   });
   const columnsProductos4: GridColDef[] = [
@@ -367,7 +367,7 @@ function CitaScreen() {
         <TextField
           label="Cantidad"
           name="cantidad"
-          defaultValue={formServicio.cantidad}
+          value={formServicio.cantidad}
           onChange={handleChangeServicios}
           fullWidth
           size="small"
@@ -378,7 +378,7 @@ function CitaScreen() {
         <TextField
           label="Observaciones"
           name="observaciones"
-          defaultValue={formServicio.observaciones}
+          value={formServicio.observaciones}
           onChange={handleChangeServicios}
           fullWidth
           size="small"

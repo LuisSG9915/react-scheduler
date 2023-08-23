@@ -39,7 +39,7 @@ export const useProductosFiltradoExistenciaProducto = ({
   }, []);
   useEffect(() => {
     fetchProduct4();
-  }, [descripcion]);
+  }, [sucursal]);
 
   return { dataProductos4, fetchProduct4, setDataProductos4 };
 };

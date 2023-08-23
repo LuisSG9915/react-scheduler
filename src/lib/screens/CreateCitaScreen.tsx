@@ -10,6 +10,7 @@ import {
   Modal,
   FormGroup,
   ButtonGroup,
+  FormControl,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -116,6 +117,16 @@ function CreateCitaScreen() {
     d_servicio: "",
     id: 0,
   });
+  const [formEditServicio, setFormEditServicio] = useState<ServicioPost>({
+    id_Cita: 0,
+    idServicio: 0,
+    cantidad: 0,
+    precio: 0,
+    observaciones: "",
+    usuario: 0,
+    d_servicio: "",
+    id: 0,
+  });
   const limpiarFormServicios = () => {
     setFormServicio({
       cantidad: 0,
@@ -193,15 +204,23 @@ function CreateCitaScreen() {
         .then((response) => {
           getCitaServicios(formServicio.id_Cita);
           setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
-          Swal.fire({
-            icon: "success",
-            text: `Realizado`,
-            confirmButtonColor: "#3085d6",
-          });
+          alert("Servicio ingresado con exito");
         });
     } else {
       alert("Datos vacíos, intente de nuevo");
     }
+  };
+
+  const putServicio = () => {
+    jezaApi
+      .put(
+        `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${formEditServicio.idServicio}&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${formEditServicio.observaciones}&usuario=${datosParametros.idUser}`
+      )
+      .then(() => {
+        alert("Servicio actualizado con exito");
+        getCitaServicios(formServicio.id_Cita);
+        setModalServicioEdit(false);
+      });
   };
 
   const dataClientesWithIds = dataClientes.map((cliente, index) => ({
@@ -252,22 +271,8 @@ function CreateCitaScreen() {
       <br />
       <br />
       <ButtonGroup style={{ marginRight: 20, marginLeft: 20, direction: "rtl" }}>
-        {/* <Button
-          color="error"
-          variant="outlined"
-          onClick={() => {
-            setDataEvent({
-              ...dataEvent,
-              description: "",
-              nombreCliente: "",
-              idCliente: 0,
-            });
-          }}
-        >
-          Salir
-        </Button> */}
         <Button color="success" variant="contained" onClick={() => postCita()}>
-          Guardar cita
+          Ingresar servicios
         </Button>
       </ButtonGroup>
       <br />
@@ -344,7 +349,7 @@ function CreateCitaScreen() {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "50%",
-            height: "75%",
+            height: "100%",
             backgroundColor: "#fff",
             padding: 16,
             borderRadius: 4,
@@ -352,61 +357,6 @@ function CreateCitaScreen() {
           }}
         >
           <hr />
-          <h3>Servicios...</h3>
-
-          {datasServicios.length > 0 ? (
-            datasServicios.map((servicio: Servicio, index: number) => (
-              <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
-                <Grid container>
-                  <Grid item xs={12}>
-                    <Card sx={{ width: "100%" }}>
-                      <CardContent>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="body1">
-                              Servicio: {servicio.descripcion}
-                            </Typography>
-                            <Typography variant="caption">
-                              Cantidad: {servicio.cantidad + "   "}
-                            </Typography>
-                            <Typography variant="caption">
-                              {servicio.observaciones
-                                ? `Obseración: ${servicio.observaciones} `
-                                : ""}
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <DeleteIcon
-                              onClick={() => deleteServicio(Number(servicio.id))}
-                              style={{ marginLeft: "auto" }}
-                            />
-                            <EditIcon
-                              onClick={() => {
-                                setFormServicio({
-                                  cantidad: servicio.cantidad,
-                                  id_Cita: servicio.id_Cita,
-                                  idServicio: servicio.idServicio,
-                                  observaciones: servicio.observaciones,
-                                  precio: servicio.precio,
-                                  usuario: 1,
-                                  d_servicio: servicio.descripcion,
-                                  id: servicio.id,
-                                });
-                                setModalServicioEdit(true);
-                                console.log(servicio);
-                              }}
-                            />
-                          </Grid>
-                        </Grid>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              </div>
-            ))
-          ) : (
-            <p>No hay servicios en proceso</p>
-          )}
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <h3>Agregar servicios</h3>
             <AddCircleIcon
@@ -443,7 +393,6 @@ function CreateCitaScreen() {
             size="small"
             sx={{ marginBottom: "16px" }}
           ></TextField>
-
           <Button
             variant="contained"
             color="success"
@@ -455,8 +404,62 @@ function CreateCitaScreen() {
             Guardar
           </Button>
           <br />
-          <br />
           <hr />
+          <h3>Servicios...</h3>
+          {datasServicios.length > 0 ? (
+            datasServicios.map((servicio: Servicio, index: number) => (
+              <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Card sx={{ width: "100%" }}>
+                      <CardContent>
+                        <Grid container alignItems="center" justifyContent="space-between">
+                          <Grid item>
+                            <Typography variant="body1">
+                              Servicio: {servicio.descripcion}
+                            </Typography>
+                            <Typography variant="caption">
+                              Cantidad: {servicio.cantidad + "   "}
+                            </Typography>
+                            <Typography variant="caption">
+                              {servicio.observaciones
+                                ? `Obseración: ${servicio.observaciones} `
+                                : ""}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <DeleteIcon
+                              onClick={() => deleteServicio(Number(servicio.id))}
+                              style={{ marginLeft: "auto" }}
+                            />
+                            <EditIcon
+                              onClick={() => {
+                                setFormEditServicio({
+                                  cantidad: servicio.cantidad,
+                                  id_Cita: servicio.id_Cita,
+                                  idServicio: servicio.idServicio,
+                                  observaciones: servicio.observaciones,
+                                  precio: servicio.precio,
+                                  usuario: servicio.idCliente,
+                                  d_servicio: servicio.descripcion,
+                                  id: servicio.id,
+                                });
+                                setModalServicioEdit(true);
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                </Grid>
+              </div>
+            ))
+          ) : (
+            <p>No hay servicios en proceso</p>
+          )}
+          <br />
+          <br />
           <br />
           <div style={{ display: "flex", justifyContent: "end" }}>
             <Button
@@ -518,6 +521,100 @@ function CreateCitaScreen() {
               variant={"contained"}
               onClick={() => {
                 setModalProductoSelect(false);
+              }}
+            >
+              Salir
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={modalServicioEdit}
+        onClose={() => {
+          setModalServicioEdit(false);
+          setFormServicio({
+            cantidad: 0,
+            id_Cita: 0,
+            idServicio: 0,
+            observaciones: "",
+            precio: 0,
+            usuario: 1,
+            d_servicio: "",
+            id: 0,
+          });
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            height: "60%",
+            backgroundColor: "#fff",
+            padding: 16,
+            borderRadius: 4,
+            overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
+          }}
+        >
+          <h2> Edición de servicio... </h2>
+          <FormControl sx={{ m: 1, width: "95%" }} variant="outlined">
+            <Typography> Servicio </Typography>
+            <TextField
+              size="small"
+              value={formEditServicio.d_servicio}
+              disabled
+              sx={{
+                backgroundColor: "lightgray",
+              }}
+            ></TextField>
+            <br />
+            <Typography> Cantidad </Typography>
+            <TextField
+              size="small"
+              defaultValue={formEditServicio.cantidad}
+              name="cantidad"
+              onChange={(value) =>
+                setFormEditServicio({ ...formEditServicio, cantidad: Number(value.target.value) })
+              }
+            ></TextField>
+            <br />
+            <Typography> Observaciones </Typography>
+            <TextField
+              size="small"
+              defaultValue={formEditServicio.observaciones}
+              multiline
+              maxRows={4}
+              name="observaciones"
+              onChange={(value) =>
+                setFormEditServicio({ ...formEditServicio, observaciones: value.target.value })
+              }
+            ></TextField>
+          </FormControl>
+          <br />
+          {/* <Button onClick={() => edit()}> Guardar </Button> */}
+          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
+            {" "}
+            <Button variant={"contained"} onClick={() => putServicio()}>
+              Guardar
+            </Button>
+            <Button
+              variant={"contained"}
+              color="error"
+              onClick={() => {
+                setFormServicio({
+                  cantidad: 0,
+                  id_Cita: 0,
+                  idServicio: 0,
+                  observaciones: "",
+                  precio: 0,
+                  usuario: 1,
+                  d_servicio: "",
+                  id: 0,
+                });
+                setModalServicioEdit(false);
               }}
             >
               Salir
