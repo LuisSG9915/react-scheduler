@@ -10,6 +10,11 @@ import {
   FormControl,
   SelectChangeEvent,
   Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -143,10 +148,16 @@ function CitaScreen() {
 
     axios
       .put(
-        `http://cbinfo.no-ip.info:9089/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${nuevaFecha}&idCliente=${datosParametros.idClienteSeparada}&tiempo=${datosParametros.tiempoSeparada}&idEstilista=${datosParametros.idEstilista}&idUsuario=${datosParametros.idRec}&estatus=${dataEvent.idEstatus}`
+        `http://cbinfo.no-ip.info:9089/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${
+          datosParametros.idSuc
+        }&fechaCita=${nuevaFecha}&idCliente=${datosParametros.idClienteSeparada}&tiempo=${
+          datosParametros.tiempoSeparada.toString() === "NaN" ? 0 : datosParametros.tiempoSeparada
+        }&idEstilista=${datosParametros.idEstilista}&idUsuario=${datosParametros.idRec}&estatus=${
+          dataEvent.idEstatus
+        }`
       )
       .then((response) => {
-        alert("Acción realizada");
+        setSuccessInfo(true);
         setModalCitaEdit(false);
       });
   };
@@ -155,8 +166,7 @@ function CitaScreen() {
 
   const deleteServicio = (id: number) => {
     jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
-      alert("Eliminación exitosa");
-      // getCitaServicios(formServicio.id_Cita);
+      setDeleteInfo(true); // getCitaServicios(formServicio.id_Cita);
       getCitaServicios(Number(datosParametros.idCita));
     });
   };
@@ -240,7 +250,6 @@ function CitaScreen() {
       field: "action",
       headerName: "Acciones",
       width: 200,
-      // renderCell: (params) => <span>{params.row.precio}</span>,
       renderCell: (params) => (
         <Button
           variant={"contained"}
@@ -267,17 +276,18 @@ function CitaScreen() {
           `/CitaServicio?id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idSuc}`
         )
         .then((response) => {
-          Swal.fire({
-            icon: "success",
-            // text: `${response.data[0].mensaje1}`,
-            text: `Realizado`,
-            confirmButtonColor: "#3085d6",
-          });
+          setSuccessInfo(true);
           getCitaServicios(Number(datosParametros.idCita));
-          setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
+          setFormServicio({
+            ...formServicio,
+            d_servicio: "",
+            cantidad: 0,
+            observaciones: "",
+            idServicio: 0,
+          });
         });
     } else {
-      alert("Datos vacíos, intente de nuevo");
+      setVoidInfo(true);
     }
   };
   const [modalServicioEdit, setModalServicioEdit] = useState(false);
@@ -287,15 +297,101 @@ function CitaScreen() {
         `/CitaServicio?id=${formServicio.id}&id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idRec}`
       )
       .then(() => {
-        alert("Servicio actualizado");
+        setSuccessInfo(true);
         setModalServicioEdit(false);
         getCitaServicios(formServicio.id_Cita);
-        setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
+        setFormServicio({
+          ...formServicio,
+          d_servicio: "",
+          cantidad: 0,
+          observaciones: "",
+          idServicio: 0,
+        });
       });
   };
-  // Plaza 1 y plaza 2,
+
+  interface Props {
+    openModal: boolean;
+    onClose: () => void;
+    textTitle: string;
+    contentText: string;
+    salir: () => void;
+    guardar?: (id: number) => void;
+  }
+  const [voidInfo, setVoidInfo] = useState(false);
+  const [successInfo, setSuccessInfo] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState(false);
+  const DialogComponent = ({
+    openModal,
+    onClose,
+    textTitle,
+    contentText,
+    salir,
+    guardar,
+  }: Props) => {
+    return (
+      <Dialog open={openModal} onClose={onClose}>
+        <DialogTitle>{textTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">{contentText}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color={"error"} onClick={salir}>
+            Salir
+          </Button>
+          {guardar ? (
+            <Button
+              variant="contained"
+              color={"success"}
+              onClick={() => guardar(id || 0)} // Pass the id parameter to guardar
+              autoFocus
+            >
+              Ok
+            </Button>
+          ) : null}
+        </DialogActions>
+      </Dialog>
+    );
+  };
+  const voidCerrar = () => {
+    setVoidInfo(false);
+  };
+  const successInfoFunction = () => {
+    setSuccessInfo(false);
+  };
+  const deleteInfoFunction = () => {
+    setDeleteInfo(false);
+  };
+  const [id, setid] = useState(0);
+  const confirmationDelete = (id: number) => {
+    setDeleteInfo(true);
+    setid(id);
+    // deleteServicio(id);
+  };
   return (
     <>
+      <DialogComponent
+        openModal={successInfo}
+        onClose={() => setSuccessInfo(false)}
+        textTitle={"Ok"}
+        contentText={"Información guardada correctamente"}
+        salir={successInfoFunction}
+      />
+      <DialogComponent
+        openModal={voidInfo}
+        onClose={() => setVoidInfo(false)}
+        textTitle={"Error"}
+        contentText={"Error, información vacía, favor de verificar"}
+        salir={voidCerrar}
+      />
+      <DialogComponent
+        openModal={deleteInfo}
+        onClose={() => setDeleteInfo(false)}
+        textTitle={"Error"}
+        contentText={"¿Está seguro de eliminar el servicio?"}
+        guardar={() => deleteServicio(id)}
+        salir={deleteInfoFunction}
+      />
       <div style={{ marginRight: 25, marginLeft: 25 }}>
         <div style={{ right: 10, top: 10, position: "absolute" }}>
           <MoreVertIcon onClick={() => setModalCitaEdit(true)}> </MoreVertIcon>
@@ -532,12 +628,14 @@ function CitaScreen() {
             Buscar
           </Button>
           <br />
-          {/* <Button onClick={() => edit()}> Guardar </Button> */}
           <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-            <Button color="warning" onClick={() => setModalCitaEdit(false)}>
+            <Button variant={"contained"} color="warning" onClick={() => setModalCitaEdit(false)}>
               Salir
             </Button>
-            <Button onClick={() => putCitaEstado()}> Guardar </Button>
+            <Button variant={"contained"} onClick={() => putCitaEstado()}>
+              {" "}
+              Guardar{" "}
+            </Button>
           </div>
         </div>
       </Modal>

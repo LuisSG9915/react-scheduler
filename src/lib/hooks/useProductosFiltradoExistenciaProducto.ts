@@ -21,16 +21,20 @@ export const useProductosFiltradoExistenciaProducto = ({
   const [dataProductos4, setDataProductos4] = useState<ProductoExistencia[]>([]);
 
   const fetchProduct4 = async () => {
-    try {
-      const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
-        `/ProductoExistencia?id=0&descripcion=${
-          descripcion ? descripcion : "%"
-        }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=21&sucursal=${sucursal}`
-      );
-      setDataProductos4(response.data);
-      console.log({ dataProductos4 });
-    } catch (error) {
-      console.log(error);
+    if (sucursal === 0) {
+      return;
+    } else {
+      try {
+        const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
+          `/ProductoExistencia?id=0&descripcion=${
+            descripcion ? descripcion : "%"
+          }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=21&sucursal=${sucursal}`
+        );
+        setDataProductos4(response.data);
+        console.log({ dataProductos4 });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

@@ -11,25 +11,26 @@ import {
   FormGroup,
   ButtonGroup,
   FormControl,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format, startOfToday, setHours, parse } from "date-fns";
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { useClientes } from "../hooks/useClientes";
 import { Eventos } from "../models/Events";
 import axios from "axios";
 import { Servicio, ServicioPost } from "../models/Servicio";
 import EditIcon from "@mui/icons-material/Edit";
-
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Swal from "sweetalert2";
 
 function CreateCitaScreen() {
   const { dataClientes } = useClientes();
@@ -92,7 +93,7 @@ function CreateCitaScreen() {
     const fechaTemporal = new Date(datosParametros.fecha);
     const formattedDate = format(fechaTemporal, "yyyy-MM-dd HH:mm");
     if (!dataEvent.idCliente) {
-      alert("No puede ingresar datos vacios");
+      setVoidInfo(true);
     } else {
       axios
         .post(
@@ -142,8 +143,8 @@ function CreateCitaScreen() {
   };
   const deleteServicio = (id: number) => {
     jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
-      alert("Eliminación exitosa");
       getCitaServicios(formServicio.id_Cita);
+      setDeleteInfo(false);
     });
   };
   const getCitaServicios = async (id: number) => {
@@ -202,12 +203,12 @@ function CreateCitaScreen() {
           `/CitaServicio?id_Cita=${formServicio.id_Cita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idUser}`
         )
         .then((response) => {
+          setSuccessInfo(true);
           getCitaServicios(formServicio.id_Cita);
           setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
-          alert("Servicio ingresado con exito");
         });
     } else {
-      alert("Datos vacíos, intente de nuevo");
+      setVoidInfo(true);
     }
   };
 
@@ -217,7 +218,7 @@ function CreateCitaScreen() {
         `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${formEditServicio.idServicio}&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${formEditServicio.observaciones}&usuario=${datosParametros.idUser}`
       )
       .then(() => {
-        alert("Servicio actualizado con exito");
+        setSuccessInfo(true);
         getCitaServicios(formServicio.id_Cita);
         setModalServicioEdit(false);
       });
@@ -227,9 +228,88 @@ function CreateCitaScreen() {
     ...cliente,
     id: index + 1, // O utiliza algún valor único de tu elección
   }));
-
+  interface Props {
+    openModal: boolean;
+    onClose: () => void;
+    textTitle: string;
+    contentText: string;
+    salir: () => void;
+    guardar?: (id: number) => void;
+  }
+  const [voidInfo, setVoidInfo] = useState(false);
+  const [successInfo, setSuccessInfo] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState(false);
+  const DialogComponent = ({
+    openModal,
+    onClose,
+    textTitle,
+    contentText,
+    salir,
+    guardar,
+  }: Props) => {
+    return (
+      <Dialog open={openModal} onClose={onClose}>
+        <DialogTitle>{textTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">{contentText}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color={"error"} onClick={salir}>
+            Salir
+          </Button>
+          {guardar ? (
+            <Button
+              variant="contained"
+              color={"success"}
+              onClick={() => guardar(id || 0)} // Pass the id parameter to guardar
+              autoFocus
+            >
+              Ok
+            </Button>
+          ) : null}
+        </DialogActions>
+      </Dialog>
+    );
+  };
+  const voidCerrar = () => {
+    setVoidInfo(false);
+  };
+  const successInfoFunction = () => {
+    setSuccessInfo(false);
+  };
+  const deleteInfoFunction = () => {
+    setDeleteInfo(false);
+  };
+  const [id, setid] = useState(0);
+  const confirmationDelete = (id: number) => {
+    setDeleteInfo(true);
+    setid(id);
+    // deleteServicio(id);
+  };
   return (
     <>
+      <DialogComponent
+        openModal={successInfo}
+        onClose={() => setSuccessInfo(false)}
+        textTitle={"Ok"}
+        contentText={"Información guardada correctamente"}
+        salir={successInfoFunction}
+      />
+      <DialogComponent
+        openModal={voidInfo}
+        onClose={() => setVoidInfo(false)}
+        textTitle={"Error"}
+        contentText={"Error, información vacía, favor de verificar"}
+        salir={voidCerrar}
+      />
+      <DialogComponent
+        openModal={deleteInfo}
+        onClose={() => setDeleteInfo(false)}
+        textTitle={"Error"}
+        contentText={"¿Está seguro de eliminar el servicio?"}
+        guardar={() => deleteServicio(id)}
+        salir={deleteInfoFunction}
+      />
       <FormGroup style={{ marginRight: 20, marginLeft: 20 }}>
         <h2>Ingresar cita</h2>
         <p>Fecha de cita</p>
@@ -277,6 +357,7 @@ function CreateCitaScreen() {
       </ButtonGroup>
       <br />
       <br />
+
       <Modal open={modalCliente} onClose={() => setmodalCliente(false)}>
         <div
           style={{
@@ -398,7 +479,6 @@ function CreateCitaScreen() {
             color="success"
             onClick={() => {
               postServicio();
-              limpiarFormServicios();
             }}
           >
             Guardar
@@ -429,7 +509,7 @@ function CreateCitaScreen() {
                           </Grid>
                           <Grid item>
                             <DeleteIcon
-                              onClick={() => deleteServicio(Number(servicio.id))}
+                              onClick={() => confirmationDelete(Number(servicio.id))}
                               style={{ marginLeft: "auto" }}
                             />
                             <EditIcon
@@ -605,8 +685,8 @@ function CreateCitaScreen() {
               color="error"
               onClick={() => {
                 setFormServicio({
+                  ...formServicio,
                   cantidad: 0,
-                  id_Cita: 0,
                   idServicio: 0,
                   observaciones: "",
                   precio: 0,
