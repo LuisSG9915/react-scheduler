@@ -86,10 +86,8 @@ function CitaScreen() {
         title: evento?.nombre ? evento?.nombre : "",
         mobile: evento?.descripcion_puesto ? evento?.descripcion_puesto : "",
       }));
-      const elementosFiltrados = formattedData.filter((elemento: EstilistaResponse) =>
-        clavesEmpleados.includes(elemento.clave_empleado)
-      );
-      setDatasEstilista(elementosFiltrados);
+
+      setDatasEstilista(reponseTemporal);
     } catch (error) {
       console.error(error);
     }
@@ -292,6 +290,7 @@ function CitaScreen() {
         alert("Servicio actualizado");
         setModalServicioEdit(false);
         getCitaServicios(formServicio.id_Cita);
+        setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
       });
   };
   // Plaza 1 y plaza 2,
