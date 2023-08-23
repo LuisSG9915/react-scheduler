@@ -155,20 +155,20 @@ function SchedulerScreen() {
     setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: selectedValue }));
   };
 
-  const peticion = async () => {
-    const temp = new Date(nuevaFechaPrueba);
-    const formattedDate = format(temp, "yyyyMMdd");
-    try {
-      const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
-          idSuc ? idSuc : 21
-        }&estilista=%&f1=${"20230110"}&f2=${formattedDate}&cliente=%&estatus=%`
-      );
-      setDatas(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const peticion = async () => {
+  //   const temp = new Date(nuevaFechaPrueba);
+  //   const formattedDate = format(temp, "yyyyMMdd");
+  //   try {
+  //     const response = await axios.get(
+  //       `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
+  //         idSuc ? idSuc : 21
+  //       }&estilista=%&f1=${"20230110"}&f2=${formattedDate}&cliente=%&estatus=%`
+  //     );
+  //     setDatas(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const peticionEstilista = async () => {
     if (dataEvent.sucursal !== 0) {
@@ -288,6 +288,8 @@ function SchedulerScreen() {
   };
 
   const peticiones = async () => {
+    setLoading(true);
+
     peticionEstilista().then(async () => {
       const temp = new Date(nuevaFechaPrueba);
       const formattedDate = format(temp, "yyyyMMdd");
@@ -327,10 +329,11 @@ function SchedulerScreen() {
         setTimeout(() => {
           setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
         }, 1000);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
         setFormattedDatas(formattedData);
-        changeLoadingValue(false);
-
-        console.log("peticiones");
+        // changeLoadingValue(false);
       } catch (error) {
         console.error(error);
       }
@@ -483,7 +486,7 @@ function SchedulerScreen() {
   const ligaLocal = "http://localhost:3000/";
 
   const handleOpenNewWindow = () => {
-    const url = `${ligaProductiva}Cliente`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}Cliente`; // Reemplaza esto con la URL que desees abrir
     const width = 500;
     const height = 1500;
     const left = (window.screen.width - width) / 2;
@@ -492,7 +495,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
-    const url = `${ligaProductiva}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1000;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -501,7 +504,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCitaScreen = ({ idCita, idUser, idCliente, fecha }) => {
-    const url = `${ligaProductiva}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1200;
     const height = 1200;
     const left = (window.screen.width - width) / 2;
@@ -522,10 +525,14 @@ function SchedulerScreen() {
 
     // peticiones() porque no lo uso, no sé
   }, [idSuc, dataEvent.sucursal, !datasEstilista]);
+
+  const [loading, setLoading] = useState(true);
+
   return (
     <Fragment>
       {/* <SidebarHorizontal></SidebarHorizontal> */}
       <div style={{ textAlign: "center", width: 150 }}>
+        {loading ? <h1>a</h1> : <h1>CARGANDING</h1>}
         <Button
           color={mode === "default" ? "primary" : "inherit"}
           variant={mode === "default" ? "contained" : "text"}
@@ -599,6 +606,7 @@ function SchedulerScreen() {
         onSelectedDateChange={(date) => {
           setNuevaFechaPrueba(date);
         }}
+        loading={loading}
         onConfirm={handleConfirmEvent}
         onDelete={handleDeleteEvent}
         customEditor={({ close, state }) => {

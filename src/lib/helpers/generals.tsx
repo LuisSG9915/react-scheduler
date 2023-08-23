@@ -88,7 +88,7 @@ export const traversCrossingEvents = (
   return todayEvents.filter(
     (e) =>
       e.event_id !== event.event_id &&
-      (isWithinInterval(addMinutes(event.start, 1), {
+      (isWithinInterval(addMinutes(event.start, 2), {
         start: e.start,
         end: e.end,
       }) ||
@@ -96,7 +96,7 @@ export const traversCrossingEvents = (
           start: e.start,
           end: e.end,
         }) ||
-        isWithinInterval(addMinutes(e.start, 1), {
+        isWithinInterval(addMinutes(e.start, 2), {
           start: event.start,
           end: event.end,
         }) ||
@@ -112,7 +112,7 @@ export const calcMinuteHeight = (cellHeight: number, step: number) => {
 };
 
 export const calcCellHeight = (tableHeight: number, hoursLength: number) => {
-  return Math.max(tableHeight / hoursLength, 60) * 0.5;
+  return Math.max(tableHeight / hoursLength, 60) * 0.6;
 };
 
 export const differenceInDaysOmitTime = (start: Date, end: Date) => {
