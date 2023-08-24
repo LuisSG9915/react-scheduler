@@ -33,7 +33,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
 import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridColDef } from "@mui/x-data-grid";
-import Swal from "sweetalert2";
+import CloseIcon from "@mui/icons-material/Close";
 import { Cliente } from "../models/Cliente";
 
 function CitaScreen() {
@@ -165,10 +165,14 @@ function CitaScreen() {
   const [datasServicios, setDatasServicios] = useState<[]>([]);
 
   const deleteServicio = (id: number) => {
-    jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
-      setDeleteInfo(true); // getCitaServicios(formServicio.id_Cita);
-      getCitaServicios(Number(datosParametros.idCita));
-    });
+    if (datasServicios.length <= 1) {
+      alert("No puede quedase una cita sin servicios");
+    } else {
+      jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
+        getCitaServicios(Number(datosParametros.idCita));
+        setDeleteInfo(false);
+      });
+    }
   };
   useEffect(() => {
     // setTimeout(() => {
@@ -270,7 +274,7 @@ function CitaScreen() {
   ];
   const [modalProductoSelect, setModalProductoSelect] = useState(false);
   const postServicio = () => {
-    if (formServicio.cantidad !== 0 || formServicio.idServicio > 0) {
+    if (formServicio.cantidad > 0 && formServicio.idServicio > 0 && formServicio.observaciones) {
       jezaApi
         .post(
           `/CitaServicio?id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idSuc}`
@@ -292,22 +296,26 @@ function CitaScreen() {
   };
   const [modalServicioEdit, setModalServicioEdit] = useState(false);
   const putServicio = () => {
-    jezaApi
-      .put(
-        `/CitaServicio?id=${formServicio.id}&id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idRec}`
-      )
-      .then(() => {
-        setSuccessInfo(true);
-        setModalServicioEdit(false);
-        getCitaServicios(formServicio.id_Cita);
-        setFormServicio({
-          ...formServicio,
-          d_servicio: "",
-          cantidad: 0,
-          observaciones: "",
-          idServicio: 0,
+    if (formServicio.cantidad > 0 && formServicio.observaciones) {
+      jezaApi
+        .put(
+          `/CitaServicio?id=${formServicio.id}&id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idRec}`
+        )
+        .then(() => {
+          setSuccessInfo(true);
+          setModalServicioEdit(false);
+          getCitaServicios(formServicio.id_Cita);
+          setFormServicio({
+            ...formServicio,
+            d_servicio: "",
+            cantidad: 0,
+            observaciones: "",
+            idServicio: 0,
+          });
         });
-      });
+    } else {
+      alert("Favor de ingresar numberos");
+    }
   };
 
   interface Props {
@@ -380,14 +388,14 @@ function CitaScreen() {
       <DialogComponent
         openModal={voidInfo}
         onClose={() => setVoidInfo(false)}
-        textTitle={"Error"}
+        textTitle={"Advertencia"}
         contentText={"Error, información vacía, favor de verificar"}
         salir={voidCerrar}
       />
       <DialogComponent
         openModal={deleteInfo}
         onClose={() => setDeleteInfo(false)}
-        textTitle={"Error"}
+        textTitle={""}
         contentText={"¿Está seguro de eliminar el servicio?"}
         guardar={() => deleteServicio(id)}
         salir={deleteInfoFunction}
@@ -418,7 +426,7 @@ function CitaScreen() {
                         </Grid>
                         <Grid item>
                           <DeleteIcon
-                            onClick={() => deleteServicio(Number(servicio.id))}
+                            onClick={() => confirmationDelete(servicio.id)}
                             style={{ marginLeft: "auto" }}
                           />
                           <EditIcon
@@ -541,7 +549,7 @@ function CitaScreen() {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: 400,
-            height: "70%",
+            height: "90%",
             backgroundColor: "#fff",
             padding: 16,
             borderRadius: 4,
@@ -628,13 +636,13 @@ function CitaScreen() {
             Buscar
           </Button>
           <br />
-          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-            <Button variant={"contained"} color="warning" onClick={() => setModalCitaEdit(false)}>
-              Salir
-            </Button>
+          <div style={{ position: "fixed", top: 25, right: 25 }}>
+            <CloseIcon onClick={() => setModalCitaEdit(false)}></CloseIcon>
+          </div>
+          <br />
+          <div style={{ display: "flex", justifyContent: "end" }}>
             <Button variant={"contained"} onClick={() => putCitaEstado()}>
-              {" "}
-              Guardar{" "}
+              Guardar
             </Button>
           </div>
         </div>
@@ -799,7 +807,7 @@ function CitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "50%",
+            width: "85%",
             height: "70%",
             backgroundColor: "#fff",
             padding: 16,
@@ -827,16 +835,12 @@ function CitaScreen() {
           <br />
 
           {/* <Button onClick={() => edit()}> Guardar </Button> */}
-          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-            <Button
-              color="error"
-              variant={"contained"}
+          <div style={{ position: "absolute", top: 25, right: 25 }}>
+            <CloseIcon
               onClick={() => {
                 setModalProductoSelect(false);
               }}
-            >
-              Salir
-            </Button>
+            ></CloseIcon>
           </div>
         </div>
       </Modal>

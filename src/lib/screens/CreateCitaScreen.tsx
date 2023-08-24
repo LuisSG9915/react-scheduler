@@ -31,7 +31,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
+import CloseIcon from "@mui/icons-material/Close";
 function CreateCitaScreen() {
   const { dataClientes } = useClientes();
   const [modalCliente, setmodalCliente] = useState(false);
@@ -142,10 +142,14 @@ function CreateCitaScreen() {
     setDatasServicios([]);
   };
   const deleteServicio = (id: number) => {
-    jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
-      getCitaServicios(formServicio.id_Cita);
-      setDeleteInfo(false);
-    });
+    if (datasServicios.length <= 1) {
+      alert("Las citas no se pueden quedar vacías, favor de verificar");
+    } else {
+      jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
+        getCitaServicios(formServicio.id_Cita);
+        setDeleteInfo(false);
+      });
+    }
   };
   const getCitaServicios = async (id: number) => {
     const temporal = new Date(datosParametros.fecha);
@@ -197,7 +201,7 @@ function CreateCitaScreen() {
     },
   ];
   const postServicio = () => {
-    if (formServicio.cantidad !== 0 && formServicio.idServicio > 0) {
+    if (formServicio.cantidad !== 0 && formServicio.idServicio > 0 && formServicio.observaciones) {
       jezaApi
         .post(
           `/CitaServicio?id_Cita=${formServicio.id_Cita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idUser}`
@@ -205,7 +209,13 @@ function CreateCitaScreen() {
         .then((response) => {
           setSuccessInfo(true);
           getCitaServicios(formServicio.id_Cita);
-          setFormServicio({ ...formServicio, d_servicio: "", cantidad: 0, observaciones: "" });
+          setFormServicio({
+            ...formServicio,
+            d_servicio: "",
+            cantidad: 0,
+            observaciones: "",
+            idServicio: 0,
+          });
         });
     } else {
       setVoidInfo(true);
@@ -213,15 +223,19 @@ function CreateCitaScreen() {
   };
 
   const putServicio = () => {
-    jezaApi
-      .put(
-        `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${formEditServicio.idServicio}&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${formEditServicio.observaciones}&usuario=${datosParametros.idUser}`
-      )
-      .then(() => {
-        setSuccessInfo(true);
-        getCitaServicios(formServicio.id_Cita);
-        setModalServicioEdit(false);
-      });
+    if (formEditServicio.cantidad > 0) {
+      jezaApi
+        .put(
+          `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${formEditServicio.idServicio}&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${formEditServicio.observaciones}&usuario=${datosParametros.idUser}`
+        )
+        .then(() => {
+          setSuccessInfo(true);
+          getCitaServicios(formServicio.id_Cita);
+          setModalServicioEdit(false);
+        });
+    } else {
+      alert("Favor de ingresar numeros");
+    }
   };
 
   const dataClientesWithIds = dataClientes.map((cliente, index) => ({
@@ -292,20 +306,20 @@ function CreateCitaScreen() {
         openModal={successInfo}
         onClose={() => setSuccessInfo(false)}
         textTitle={"Ok"}
-        contentText={"Información guardada correctamente"}
+        contentText={"Registro guardado correctamente"}
         salir={successInfoFunction}
       />
       <DialogComponent
         openModal={voidInfo}
         onClose={() => setVoidInfo(false)}
-        textTitle={"Error"}
+        textTitle={"Advertencia"}
         contentText={"Error, información vacía, favor de verificar"}
         salir={voidCerrar}
       />
       <DialogComponent
         openModal={deleteInfo}
         onClose={() => setDeleteInfo(false)}
-        textTitle={"Error"}
+        textTitle={""}
         contentText={"¿Está seguro de eliminar el servicio?"}
         guardar={() => deleteServicio(id)}
         salir={deleteInfoFunction}
@@ -365,8 +379,8 @@ function CreateCitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
-            maxHeight: "80%", // Cambiar height a maxHeight
+            width: "70%",
+            maxHeight: "90%", // Cambiar height a maxHeight
             backgroundColor: "#fff",
             padding: 16,
             borderRadius: 4,
@@ -406,7 +420,7 @@ function CreateCitaScreen() {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 8,
+                  pageSize: 6,
                 },
               },
             }}
@@ -437,7 +451,14 @@ function CreateCitaScreen() {
             overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
           }}
         >
-          <hr />
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <CloseIcon
+              onClick={() => {
+                setModalServiciosAgregar(false);
+                limpiarFormServicios();
+              }}
+            ></CloseIcon>
+          </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <h3>Agregar servicios</h3>
             <AddCircleIcon
@@ -450,9 +471,9 @@ function CreateCitaScreen() {
           <p> Servicio: {formServicio.d_servicio}</p>
           <TextField
             label={"Cantidad"}
+            type="number"
             name="cantidad"
             value={formServicio.cantidad}
-            // onChange={handleChangeServicios}
             onChange={(valor) => {
               setFormServicio({ ...formServicio, cantidad: Number(valor.target.value) });
             }}
@@ -469,7 +490,6 @@ function CreateCitaScreen() {
             onChange={(valor) => {
               setFormServicio({ ...formServicio, observaciones: valor.target.value });
             }}
-            // onChange={handleChangeServicios}
             fullWidth
             size="small"
             sx={{ marginBottom: "16px" }}
@@ -483,6 +503,7 @@ function CreateCitaScreen() {
           >
             Guardar
           </Button>
+          <br />
           <br />
           <hr />
           <h3>Servicios...</h3>
@@ -541,18 +562,6 @@ function CreateCitaScreen() {
           <br />
           <br />
           <br />
-          <div style={{ display: "flex", justifyContent: "end" }}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => {
-                setModalServiciosAgregar(false);
-                limpiarFormServicios();
-              }}
-            >
-              Salir
-            </Button>
-          </div>
         </div>
       </Modal>
       <Modal
@@ -576,6 +585,13 @@ function CreateCitaScreen() {
           }}
         >
           <h2> Selección de servicio </h2>
+          <div style={{ position: "fixed", top: 25, right: 25 }}>
+            <CloseIcon
+              onClick={() => {
+                setModalProductoSelect(false);
+              }}
+            ></CloseIcon>
+          </div>
           <DataGrid
             rows={dataProductos4}
             columns={columnsProductos4}
@@ -595,17 +611,6 @@ function CreateCitaScreen() {
           <br />
 
           {/* <Button onClick={() => edit()}> Guardar </Button> */}
-          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-            <Button
-              color="error"
-              variant={"contained"}
-              onClick={() => {
-                setModalProductoSelect(false);
-              }}
-            >
-              Salir
-            </Button>
-          </div>
         </div>
       </Modal>
 
@@ -654,6 +659,7 @@ function CreateCitaScreen() {
             <Typography> Cantidad </Typography>
             <TextField
               size="small"
+              type="number"
               defaultValue={formEditServicio.cantidad}
               name="cantidad"
               onChange={(value) =>
@@ -675,14 +681,8 @@ function CreateCitaScreen() {
           </FormControl>
           <br />
           {/* <Button onClick={() => edit()}> Guardar </Button> */}
-          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-            {" "}
-            <Button variant={"contained"} onClick={() => putServicio()}>
-              Guardar
-            </Button>
-            <Button
-              variant={"contained"}
-              color="error"
+          <div style={{ position: "absolute", top: 10, right: 10 }}>
+            <CloseIcon
               onClick={() => {
                 setFormServicio({
                   ...formServicio,
@@ -696,8 +696,11 @@ function CreateCitaScreen() {
                 });
                 setModalServicioEdit(false);
               }}
-            >
-              Salir
+            ></CloseIcon>
+          </div>
+          <div style={{ position: "absolute", bottom: 10, right: 10 }}>
+            <Button variant={"contained"} onClick={() => putServicio()}>
+              Guardar
             </Button>
           </div>
         </div>
