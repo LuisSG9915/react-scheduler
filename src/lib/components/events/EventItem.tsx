@@ -133,7 +133,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           {viewerTitleComponent instanceof Function ? (
             viewerTitleComponent(event)
           ) : (
-            <Typography style={{ padding: "5px 0" }} noWrap>
+            <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
               {event.description}
             </Typography>
           )}
@@ -142,8 +142,8 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
         <div style={{ padding: "5px 10px" }}>
           <Typography
-            style={{ display: "flex", alignItems: "center", gap: 8 }}
-            color="textSecondary"
+            style={{ display: "flex", alignItems: "center", gap: 8, color: "black" }}
+            // color="textSecondary"
             variant="caption"
             noWrap
           >
@@ -158,7 +158,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           </Typography>
           {hasResource.length > 0 && (
             <Typography
-              style={{ display: "flex", alignItems: "center", gap: 8 }}
+              style={{ display: "flex", alignItems: "center", gap: 8, color: "black" }}
               color="textSecondary"
               variant="caption"
               noWrap
@@ -215,12 +215,12 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
     let item = (
       <div style={{ padding: "2px 6px" }}>
-        <Typography style={{ fontSize: 11 }} noWrap>
+        <Typography style={{ fontSize: 11, color: "white" }} noWrap>
           {`${event.description}`}
         </Typography>
 
         {showdate && (
-          <Typography style={{ fontSize: 11 }} noWrap>
+          <Typography style={{ fontSize: 11, color: "black" }} noWrap>
             {`${format(event.start, hFormat, {
               locale,
             })} - ${format(event.end, hFormat, { locale })} `}

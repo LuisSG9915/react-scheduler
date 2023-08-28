@@ -20,7 +20,7 @@ import {
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format, startOfToday, setHours, parse } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClientes } from "../hooks/useClientes";
 import { Eventos } from "../models/Events";
 import axios from "axios";
@@ -32,7 +32,11 @@ import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
+import { SchedulerRef } from "../types";
+
 function CreateCitaScreen() {
+  const calendarRef = useRef<SchedulerRef>(null);
+
   const { dataClientes } = useClientes();
   const [modalCliente, setmodalCliente] = useState(false);
   const [datasServicios, setDatasServicios] = useState<[]>([]);
@@ -302,6 +306,7 @@ function CreateCitaScreen() {
   };
   return (
     <>
+      {/* <Button onClick={() => (calendarRef.current.scheduler.customEditor()  )}>Salir</Button> */}
       <DialogComponent
         openModal={successInfo}
         onClose={() => setSuccessInfo(false)}
@@ -313,7 +318,7 @@ function CreateCitaScreen() {
         openModal={voidInfo}
         onClose={() => setVoidInfo(false)}
         textTitle={"Advertencia"}
-        contentText={"Error, información vacía, favor de verificar"}
+        contentText={"Hacen falta datos, favor de revisarlos"}
         salir={voidCerrar}
       />
       <DialogComponent

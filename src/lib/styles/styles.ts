@@ -74,11 +74,14 @@ export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?:
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        position: "sticky",
         left: 0,
         zIndex: 999,
+        fontSize: "14px",
+
         [theme.breakpoints.down("md")]: {
           writingMode: "vertical-rl",
+          fontStyle: "italic",
+          fontSize: "10px",
         },
       },
       "& > button": {

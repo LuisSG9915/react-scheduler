@@ -35,6 +35,7 @@ import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFil
 import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridColDef } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import { Cliente } from "../models/Cliente";
+import { useEstatusCitas } from "../hooks/useEstatusCitas";
 
 function CitaScreen() {
   const [modalCliente, setmodalCliente] = useState(false);
@@ -80,6 +81,7 @@ function CitaScreen() {
     });
   }, []);
   const clavesEmpleados = ["4", "5", "9", "10"];
+  const { estatusCitas } = useEstatusCitas();
 
   const peticionEstilista = async () => {
     try {
@@ -138,7 +140,7 @@ function CitaScreen() {
   const handleChangeSelect = (event: SelectChangeEvent<number>) => {
     const selectedValue = event.target.value;
     const selectedName = event.target.name;
-    setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: selectedValue }));
+    setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: Number(selectedValue) }));
   };
   const [datasEstilista, setDatasEstilista] = useState<EstilistaResponse[]>([]);
   const [modalEstilista, setModalEstilista] = useState(false);
@@ -561,14 +563,11 @@ function CitaScreen() {
           <FormControl sx={{ width: "100%" }} variant="outlined">
             <Select value={dataEvent.idEstatus} name="idEstatus" onChange={handleChangeSelect}>
               <MenuItem value={0}> Escoja un estado </MenuItem>
-              <MenuItem value={1}> Cita asignada </MenuItem>
-              <MenuItem value={2}> Cita confirmada </MenuItem>
-              <MenuItem value={3}> Cancelar cita </MenuItem>
-              <MenuItem value={4}> Cita a domicilio </MenuItem>
-              <MenuItem value={5}> Cliente en proceso </MenuItem>
-              <MenuItem value={6}> Requerida </MenuItem>
-              <MenuItem value={7}> Asignada </MenuItem>
-              <MenuItem value={8}> Pendiente de revisión </MenuItem>
+              {estatusCitas.map((status) => (
+                <MenuItem key={status.id} value={status.id}>
+                  {status.descripcionEstatus}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <br />

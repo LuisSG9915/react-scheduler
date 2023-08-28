@@ -171,7 +171,7 @@ const Day = () => {
               <Fragment key={i}>
                 {/* Time Cells rs_time: tiempo celda */}
                 <span className="rs__cell rs__header rs__time" style={{ height: CELL_HEIGHT }}>
-                  <Typography variant="caption">{format(h, hFormat, { locale })}</Typography>
+                  <p>{format(h, hFormat, { locale })}</p>
                 </span>
 
                 <span className={`rs__cell ${isToday(selectedDate) ? "rs__today_cell" : ""}`}>

@@ -25,6 +25,7 @@ const ResourcesTables = ({ renderChildren }: WithResourcesProps) => {
       {resources.map((res: DefaultRecourse, i: number) => (
         <div key={`${res[resourceFields.idField]}_${i}`}>
           <ResourceHeader resource={res} />
+
           {renderChildren(res)}
         </div>
       ))}

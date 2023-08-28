@@ -22,7 +22,9 @@ const ResourceHeader = ({ resource }: ResourceHeaderProps) => {
 
   const headerBorders =
     resourceViewMode === "tabs"
-      ? {}
+      ? {
+          top: 0,
+        }
       : {
           borderColor: "#eee",
           borderStyle: "solid",
@@ -33,6 +35,10 @@ const ResourceHeader = ({ resource }: ResourceHeaderProps) => {
       sx={{
         padding: "2px 10px",
         textAlign: direction === "rtl" ? "right" : "left",
+        // position: "sticky",
+        // left: 0,
+        // right: 0,
+        // bottom: 0,
         ...headerBorders,
       }}
       component="span"
