@@ -247,17 +247,17 @@ function SchedulerScreen() {
               ? COLOR_ESTATUS_CITAS[1]
               : evento.estatus === 3
               ? COLOR_ESTATUS_CITAS[2]
-              : evento.estatus === 4
-              ? COLOR_ESTATUS_CITAS[3]
-              : evento.estatus === 5
+              : evento.estatus === 1007
+              ? COLOR_ESTATUS_CITAS[5]
+              : evento.estatus === 1008
               ? COLOR_ESTATUS_CITAS[4]
               : evento.estatus === 6
-              ? COLOR_ESTATUS_CITAS[5]
-              : evento.estatus === 7
-              ? COLOR_ESTATUS_CITAS[6]
-              : evento.estatus === 8
-              ? COLOR_ESTATUS_CITAS[7]
-              : "lightblue",
+              ? COLOR_ESTATUS_CITAS[3]
+              : evento.estatus === 1005
+              ? COLOR_ESTATUS_CITAS[2]
+              : evento.estatus === 4
+              ? COLOR_ESTATUS_CITAS[3]
+              : "grey",
         }));
         setTimeout(() => {
           setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
@@ -286,7 +286,6 @@ function SchedulerScreen() {
 
   const putCita = (cita: ProcessedEvent) => {
     if (cita.start < new Date()) {
-      peticiones();
       setMessageDialog({
         subtitle:
           "No se pueden actualizar citas en un horario anterior al actual, favor de intentarlo de nuevo",
@@ -295,6 +294,12 @@ function SchedulerScreen() {
       setTimeout(() => {
         setVoidInfo(true);
       }, 2500);
+    } else if (Number(cita.estatus) === 4) {
+      setVoidInfo(true);
+      setMessageDialog({
+        subtitle: "No se puede modificar una cita en proceso, favor de verificar la cita en ventas",
+        title: "Advertencia",
+      });
     } else {
       axios
         .put(
@@ -488,7 +493,6 @@ function SchedulerScreen() {
         onConfirm={handleConfirmEvent}
         onDelete={handleDeleteEvent}
         customEditor={({ close, state }) => {
-          console.log(calendarRef);
           const fecha = new Date();
           if (
             state.start.value < fecha.setMinutes(fecha.getMinutes() - 30) &&
@@ -505,13 +509,15 @@ function SchedulerScreen() {
           } else {
             if (Number(idSuc) === Number(dataEvent.sucursal)) {
               if (state.description.value.length > 0) {
-                console.log(state);
+                // EDICIÓN
+
                 handleOpenNewWindowCitaScreen({
                   idCita: state.event_id.value,
                   idUser: state.admin_id.value,
                   idCliente: state.title.value,
                   fecha: state.start.value,
                 });
+                // CREACIÓN
               } else {
                 handleOpenNewWindowCreateCitaScreen({
                   idUsuario: state.admin_id.value,

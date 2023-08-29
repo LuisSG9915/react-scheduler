@@ -1,0 +1,52 @@
+CREATE  PROCEDURE [dbo].[sp_detalleCitasSel]      
+@id nvarchar(30),   @suc nvarchar(30),   @estilista nvarchar(30),   
+@f1 nvarchar(30),   @f2 nvarchar(30),   @cliente nvarchar(30), @estatus nvarchar(30)    AS      
+BEGIN      
+    SET NOCOUNT ON;      
+      
+        SELECT        detalle_Citas.id, detalle_Citas.cia, detalle_Citas.sucursal , Cat_sucursales.nombre d_sucursal,       
+  detalle_Citas.fechaCita, detalle_Citas.idCliente, Cat_clientes_suc.nombre AS nombreCliente, detalle_Citas.tiempo,       
+   DATEADD( MINUTE,  tiempo,detalle_Citas.fechaCita) horaFin,      
+                         detalle_Citas.idEstilista, estilista.usuario AS nombreEstilista, detalle_Citas.idUsuario,       
+       recepcion.usuario AS nombreRecepcionista, detalle_Citas.fechaAlta, detalle_Citas.estatus, cat_estatusCitas.descripcionEstatus,       
+                         detalle_Citas.fechaCambio, cat_estatusCitas.idcolor      
+             
+       FROM            detalle_Citas INNER JOIN      
+                         Cat_sucursales ON detalle_Citas.cia = Cat_sucursales.cia AND detalle_Citas.sucursal = Cat_sucursales.sucursal INNER JOIN      
+                         Cat_clientes_suc ON detalle_Citas.idCliente = Cat_clientes_suc.id_cliente INNER JOIN      
+                         cat_usuarios AS estilista ON detalle_Citas.idEstilista = estilista.id INNER JOIN      
+                         cat_usuarios AS recepcion ON detalle_Citas.idUsuario = recepcion.id INNER JOIN      
+                         cat_estatusCitas ON detalle_Citas.estatus = cat_estatusCitas.id      
+    where detalle_citas.id like @id and detalle_Citas.sucursal like @suc and    
+ detalle_Citas.idEstilista like  @estilista and  CAST(detalle_Citas.fechaCita AS DATE) between  @f1 and  @f2 and   
+ detalle_Citas.idCliente like @cliente and detalle_Citas.estatus like @estatus    
+  
+    
+     
+    and  detalle_Citas.estatus NOT IN (3,5)      
+    
+ union     
+     
+SELECT        MAX(detalle_ventas.id) ID,   
+Cat_sucursales.cia, Cat_sucursales.sucursal, Cat_sucursales.nombre AS d_sucursal, detalle_ventas.hora AS fechaCita,   
+detalle_ventas.Cve_cliente AS idCliente, Cat_clientes_suc.nombre AS nombreCliente,     
+                         SUM(detalle_ventas.tiempo) TIEMPO, DATEADD (MINUTE, SUM(detalle_ventas.tiempo),detalle_ventas.hora) AS horaFin,   
+       detalle_ventas.[User] AS idEstilista, cnt.nombre AS nombreEstilista, 21 AS idUsuario, cat_nomina_trabajadores.nombre AS nombreRecepcionista,     
+                         max(detalle_ventas.Fecha) AS fechaAlta, 6 AS estatus, cat_estatusCitas.descripcionEstatus,   
+       max(detalle_ventas.Fecha) AS fechaCambio, cat_estatusCitas.idColor    
+FROM            detalle_ventas INNER JOIN  cat_productos CP ON detalle_ventas.Clave_prod=cp.id inner join  
+                         cat_nomina_trabajadores ON detalle_ventas.[User] = cat_nomina_trabajadores.id INNER JOIN    
+                         Cat_clientes_suc ON detalle_ventas.Cve_cliente = Cat_clientes_suc.id_cliente INNER JOIN    
+                         Cat_sucursales ON detalle_ventas.Cia = Cat_sucursales.cia AND detalle_ventas.Sucursal = Cat_sucursales.sucursal INNER JOIN    
+                         cat_nomina_trabajadores AS cnt ON detalle_ventas.[User] = cnt.id CROSS JOIN    
+                         cat_estatusCitas    
+  
+WHERE        (cat_estatusCitas.id = 6) and cp.es_servicio=1 and   cast(Fecha as date) between  @f1 and  @f2 and detalle_ventas.Sucursal like @suc  
+GROUP BY Cat_sucursales.cia, Cat_sucursales.sucursal, Cat_sucursales.nombre , detalle_ventas.hora , detalle_ventas.Cve_cliente ,   
+   Cat_clientes_suc.nombre , detalle_ventas.[User], cnt.nombre , cat_nomina_trabajadores.nombre ,  
+                         cat_estatusCitas.descripcionEstatus,   cat_estatusCitas.idColor    ,detalle_ventas.fecha  
+    
+    
+    
+END   
+  
