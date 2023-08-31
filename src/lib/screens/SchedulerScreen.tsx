@@ -498,8 +498,10 @@ function SchedulerScreen() {
                 // });
 
                 if (Number(estatusState) == 4) {
+                  close();
+                  setVoidInfo(true);
                   setMessageDialog({
-                    subtitle: "No cuenta con permisos para realizar acciones en otras sucursales",
+                    subtitle: "No puede editar una cita en proceso, favor de verificar en ventas",
                     title: "Atención",
                   });
                 } else {

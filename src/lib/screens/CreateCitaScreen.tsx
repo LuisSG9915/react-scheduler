@@ -482,7 +482,7 @@ function CreateCitaScreen() {
             disabled
             size="small"
             value={formServicio.d_servicio}
-            sx={{ marginBottom: "16px" }}
+            sx={{ marginBottom: "16px", justifyContent:"flex-start" }}
           ></TextField>
           <br />
           <br />

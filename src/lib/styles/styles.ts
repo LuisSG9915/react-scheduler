@@ -38,7 +38,7 @@ export const Table = styled("div")<{ resource_count: number }>(({ resource_count
 export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?: string }>(
   ({ days, sticky = "0", indent = "1", theme }) => ({
     display: "grid",
-    gridTemplateColumns: +indent > 0 ? `10% repeat(${days}, 1fr)` : `repeat(${days}, 1fr)`,
+    gridTemplateColumns: +indent > 0 ? `13% repeat(${days}, 1fr)` : `repeat(${days}, 1fr)`,
     overflowX: "auto",
     overflowY: "hidden",
     position: sticky === "1" ? "sticky" : "relative",
@@ -64,7 +64,7 @@ export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?:
       borderWidth: "0 1px 1px 0",
       "&.rs__header": {
         "& > :first-of-type": {
-          padding: "2px 5px",
+          padding: "1px 4px",
         },
       },
       "&.rs__header__center": {
@@ -74,12 +74,13 @@ export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?:
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        left: 0,
+        left: 5,
+        position: "sticky",
         zIndex: 999,
-        fontSize: "14px",
-        [theme.breakpoints.down("lg")]: {
+
+        fontSize: "12px",
+        [theme.breakpoints.down("md")]: {
           writingMode: "vertical-lr",
-          fontStyle: "italic",
           fontSize: "12px",
         },
       },

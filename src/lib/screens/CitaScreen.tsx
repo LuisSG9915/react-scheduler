@@ -146,8 +146,21 @@ function CitaScreen() {
     const selectedName = event.target.name;
     setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: Number(selectedValue) }));
   };
+  const handleChangeEstatusCita = (event: SelectChangeEvent<number>) => {
+    const selectedValue = event.target.value;
+    const selectedName = event.target.name;
+    setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: Number(selectedValue) }));
+    setFlagCita(true);
+    setTimeout(() => {
+      setEditEstatusInfo(true);
+    }, 1500);
+    // AQUI ABRO EL MODAL
+  };
   const [datasEstilista, setDatasEstilista] = useState<EstilistaResponse[]>([]);
   const [modalEstilista, setModalEstilista] = useState(false);
+
+  const [flagCita, setFlagCita] = useState(false);
+
   const putCitaEstado = () => {
     const temporal = new Date(datosParametros.fecha);
     const nuevaFecha = format(temporal, "yyyy-MM-dd HH:mm");
@@ -163,8 +176,13 @@ function CitaScreen() {
         }`
       )
       .then((response) => {
-        setSuccessInfo(true);
         setModalCitaEdit(false);
+        setEditEstatusInfo(false);
+        // if (flagCita === false)
+        setTimeout(() => {
+          setSuccessInfo(true);
+        }, 1000);
+        setFlagCita(false);
       });
   };
 
@@ -362,7 +380,7 @@ function CitaScreen() {
       field: "Producto_Servicio",
       headerName: "Producto o servicio",
       resizable: true,
-      minWidth: 150,
+      minWidth: 300,
     },
     { field: "Cantidad", headerName: "Cantidad", resizable: true },
     { field: "Precio", headerName: "Precio", resizable: true },
@@ -476,6 +494,7 @@ function CitaScreen() {
   const [voidInfo, setVoidInfo] = useState(false);
   const [successInfo, setSuccessInfo] = useState(false);
   const [deleteInfo, setDeleteInfo] = useState(false);
+  const [editEstatusInfo, setEditEstatusInfo] = useState(false);
   const DialogComponent = ({
     openModal,
     onClose,
@@ -531,8 +550,25 @@ function CitaScreen() {
   return (
     <>
       <div style={{ right: 10, top: 10, position: "absolute" }}>
-        <Button variant="contained" onClick={() => setModalHistorialCliente(true)}>
-          Historial del cliente
+        <Select
+          value={dataEvent.idEstatus}
+          name="idEstatus"
+          onChange={handleChangeEstatusCita}
+          size="small"
+        >
+          <MenuItem value={0}> Escoja un estado </MenuItem>
+          {estatusCitas.map((status) => (
+            <MenuItem key={status.id} value={status.id}>
+              {status.descripcionEstatus}
+            </MenuItem>
+          ))}
+        </Select>
+        <Button
+          style={{ marginLeft: 5 }}
+          variant="contained"
+          onClick={() => setModalHistorialCliente(true)}
+        >
+          Historial
           <HistoryTwoToneIcon style={{ marginLeft: 5 }} fontSize="medium"></HistoryTwoToneIcon>
         </Button>
         <Button
@@ -540,7 +576,7 @@ function CitaScreen() {
           style={{ marginLeft: 10 }}
           onClick={() => setModalCitaEdit(true)}
         >
-          Editar cita
+          Edición cita
           <ListTwoToneIcon style={{ marginLeft: 5 }} fontSize="medium"></ListTwoToneIcon>
         </Button>
       </div>
@@ -566,117 +602,162 @@ function CitaScreen() {
         guardar={() => deleteServicio(id)}
         salir={deleteInfoFunction}
       />
+      <DialogComponent
+        openModal={editEstatusInfo}
+        onClose={() => setEditEstatusInfo(false)}
+        textTitle={""}
+        contentText={"Está seguro de cambiar el estado de la cita?"}
+        guardar={() => putCitaEstado()}
+        salir={() => setEditEstatusInfo(false)}
+      />
       <div style={{ marginRight: 25, marginLeft: 25 }}>
-        <br />
-        <br />
-        <hr />
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-          <h3>Agregar servicios</h3>
-          <AddCircleIcon
-            fontSize="large"
-            color="success"
-            onClick={() => {
-              setModalProductoSelect(true);
-            }}
-          />
-        </div>
-        <TextField
-          variant="filled"
-          label={"Agrega el servicio"}
-          fullWidth
-          disabled
-          size="small"
-          value={formServicio.d_servicio}
-          sx={{ marginBottom: "16px" }}
-        ></TextField>
-        <br />
-        <br />
-        <TextField
-          label="Cantidad"
-          name="cantidad"
-          type="number"
-          value={formServicio.cantidad}
-          onChange={handleChangeServicios}
-          fullWidth
-          size="small"
-          sx={{ marginBottom: "16px" }}
-        />
-        <br />
-        <br />
-        <TextField
-          label="Observaciones"
-          name="observaciones"
-          value={formServicio.observaciones}
-          onChange={handleChangeServicios}
-          fullWidth
-          size="small"
-          sx={{ marginBottom: "16px" }}
-        />
-        <Button
-          variant="contained"
-          onClick={() => {
-            postServicio();
-          }}
-        >
-          Guardar servicio
-          <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
-        </Button>
-        <br />
-        <br />
-
-        <hr />
-        <br />
-        <h3> Servicios agregados </h3>
-        {/* ESCOJER SERVICIO */}
-        {datasServicios.length > 0 ? (
-          datasServicios.map((servicio: Servicio, index: number) => (
-            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
-              <Grid container>
-                <Grid item xs={12}>
-                  <Card sx={{ width: "100%" }}>
-                    <CardContent>
-                      <Grid container alignItems="center" justifyContent="space-between">
-                        <Grid item>
-                          <Typography variant="body1">Servicio: {servicio.descripcion}</Typography>
-                          <Typography variant="caption">
-                            Cantidad: {servicio.cantidad + "   "}
-                          </Typography>
-                          <Typography variant="caption">
-                            {servicio.observaciones ? `Obseración: ${servicio.observaciones} ` : ""}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <DeleteIcon
-                            onClick={() => confirmationDelete(servicio.id)}
-                            style={{ marginLeft: "auto" }}
-                          />
-                          <EditIcon
-                            onClick={() => {
-                              setFormServicio({
-                                cantidad: servicio.cantidad,
-                                id_Cita: servicio.id_Cita,
-                                idServicio: servicio.idServicio,
-                                observaciones: servicio.observaciones,
-                                precio: servicio.precio,
-                                usuario: 1,
-                                d_servicio: servicio.descripcion,
-                                id: servicio.id,
-                              });
-                              setModalServicioEdit(true);
-                              console.log(servicio);
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={7} md={7}>
+            <br />
+            <br />
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <h3>Agregar servicios</h3>
+              <AddCircleIcon
+                fontSize="large"
+                color="success"
+                onClick={() => {
+                  setModalProductoSelect(true);
+                }}
+              />
             </div>
-          ))
-        ) : (
-          <p>No hay servicios en proceso</p>
-        )}
+            <TextField
+              variant="filled"
+              label={"Agrega el servicio"}
+              fullWidth
+              disabled
+              size="small"
+              value={formServicio.d_servicio}
+              sx={{ marginBottom: "16px" }}
+            ></TextField>
+            <br />
+            <br />
+            <TextField
+              label="Cantidad"
+              name="cantidad"
+              type="number"
+              value={formServicio.cantidad}
+              onChange={handleChangeServicios}
+              fullWidth
+              size="small"
+              sx={{ marginBottom: "16px" }}
+            />
+            <br />
+            <br />
+            <TextField
+              label="Observaciones"
+              name="observaciones"
+              value={formServicio.observaciones}
+              onChange={handleChangeServicios}
+              fullWidth
+              size="small"
+              sx={{ marginBottom: "16px" }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                postServicio();
+              }}
+            >
+              Guardar servicio
+              <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
+            </Button>
+            <br />
+            <br />
+          </Grid>
+          <Grid item xs={12} sm={5} md={5}>
+            <br />
+            <br />
+            {/* SEPARACIÓN  */}
+            <h3> Servicios enlistados </h3>
+            {/* ESCOJER SERVICIO */}
+            {datasServicios.length > 0 ? (
+              datasServicios.map((servicio: Servicio, index: number) => (
+                <div
+                  key={index}
+                  style={{ display: "flex", alignItems: "center", marginBottom: 10 }}
+                >
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <Card sx={{ width: "100%" }}>
+                        <CardContent>
+                          <Grid container alignItems="center" justifyContent="space-between">
+                            <Grid item>
+                              <Typography variant="body1">
+                                Servicio: {servicio.descripcion}
+                              </Typography>
+                              <Typography variant="caption">
+                                Cantidad: {servicio.cantidad + "   "}
+                              </Typography>
+                              <Typography variant="caption">
+                                {servicio.observaciones
+                                  ? `Obseración: ${servicio.observaciones} `
+                                  : ""}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <DeleteIcon
+                                onClick={() => confirmationDelete(servicio.id)}
+                                style={{ marginLeft: "auto" }}
+                              />
+                              <EditIcon
+                                onClick={() => {
+                                  setFormServicio({
+                                    cantidad: servicio.cantidad,
+                                    id_Cita: servicio.id_Cita,
+                                    idServicio: servicio.idServicio,
+                                    observaciones: servicio.observaciones,
+                                    precio: servicio.precio,
+                                    usuario: 1,
+                                    d_servicio: servicio.descripcion,
+                                    id: servicio.id,
+                                  });
+                                  setModalServicioEdit(true);
+                                  console.log(servicio);
+                                }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </div>
+              ))
+            ) : (
+              <p>No hay servicios en proceso</p>
+            )}
+          </Grid>
+        </Grid>
+        <hr />
+        {/* <div style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
+          <h3>Cambiar estado de la cita</h3>
+          <FormControl sx={{ width: "100%" }} variant="outlined">
+            <Select value={dataEvent.idEstatus} name="idEstatus" onChange={handleChangeSelect}>
+              <MenuItem value={0}> Escoja un estado </MenuItem>
+              {estatusCitas.map((status) => (
+                <MenuItem key={status.id} value={status.id}>
+                  {status.descripcionEstatus}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <br />
+          <br />
+          <Button
+            variant="contained"
+            onClick={() => {
+              postServicio();
+            }}
+          >
+            Guardar nuevo estado
+            <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
+          </Button>
+        </div> */}
       </div>
 
       {/* MODALS COMIENZO */}
@@ -768,9 +849,9 @@ function CitaScreen() {
           </LocalizationProvider>
           <br />
           <br />
-          <Typography> Cambiar cliente </Typography>
+          <Typography> Cliente </Typography>
           <Select
-            sx={{ width: "75%" }}
+            sx={{ width: "100%" }}
             name="nombreCliente"
             value={datosParametros.idClienteSeparada}
             disabled
@@ -782,14 +863,14 @@ function CitaScreen() {
               </MenuItem>
             ))}
           </Select>
-          <Button
+          {/* <Button
             style={{ width: 66, marginLeft: 10, height: 29 }}
             variant="outlined"
             color="primary"
             onClick={() => setmodalCliente(true)}
           >
             Buscar
-          </Button>
+          </Button> */}
           <br />
           <br />
           <Typography> Cambiar estilista </Typography>
@@ -1075,7 +1156,7 @@ function CitaScreen() {
           <div style={{ position: "absolute", top: 25, right: 25 }}>
             <CloseIcon
               onClick={() => {
-                setModalProductoSelect(false);
+                setModalHistorialCliente(false);
               }}
             ></CloseIcon>
           </div>
@@ -1101,6 +1182,13 @@ function CitaScreen() {
             overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
           }}
         >
+          <div style={{ position: "absolute", top: 25, right: 25 }}>
+            <CloseIcon
+              onClick={() => {
+                setIsModalOpen(false);
+              }}
+            ></CloseIcon>
+          </div>
           <h2>Historial detalle</h2>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             <hr />
@@ -1127,28 +1215,27 @@ function CitaScreen() {
               </thead>
             </table>
             <hr />
-
             <br />
-            <table style={{ width: "100%" }}>
+            <table style={tableStyles}>
               <thead>
                 <tr>
-                  <th>Insumo</th>
-                  <th>Cantidad</th>
-                  <th>Precio</th>
-                  <th>Importe</th>
+                  <th style={thStyles}>Insumo</th>
+                  <th style={thStyles}>Cantidad</th>
+                  <th style={thStyles}>Precio</th>
+                  <th style={thStyles}>Importe</th>
                 </tr>
               </thead>
               <tbody>
                 {historialDetalle.map((item, index) => (
                   <tr key={index}>
-                    <td>{item.Insumo}</td>
-                    <td>{item.Cant}</td>
-                    <td>{item.precio}</td>
-                    <td>{item.importe}</td>
+                    <td style={tdStyles}>{item.Insumo}</td>
+                    <td style={tdStyles}>{item.Cant}</td>
+                    <td style={tdStyles}>{item.precio}</td>
+                    <td style={tdStyles}>{item.importe}</td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>{" "}
             <div>
               <p style={{ textAlign: "left" }}>
                 {/* <strong>Total: ${totalImportes.toFixed(2)}</strong> */}
@@ -1210,5 +1297,22 @@ function CitaScreen() {
     </>
   );
 }
+const tableStyles: React.CSSProperties = {
+  width: "100%",
+  borderCollapse: "collapse",
+};
 
+const thStyles: React.CSSProperties = {
+  border: "1px solid #ccc",
+  padding: "8px",
+  textAlign: "left",
+  background: "#f2f2f2",
+  fontWeight: "bold",
+};
+
+const tdStyles: React.CSSProperties = {
+  border: "1px solid #ccc",
+  padding: "8px",
+  textAlign: "left",
+};
 export default CitaScreen;

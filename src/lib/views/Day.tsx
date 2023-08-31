@@ -114,7 +114,7 @@ const Day = () => {
               key={event.event_id}
               className="rs__multi_day"
               style={{
-                top: i * MULTI_DAY_EVENT_HEIGHT * 1.2,
+                top: i * MULTI_DAY_EVENT_HEIGHT,
                 width: "99.9%",
                 overflowX: "hidden",
               }}
@@ -170,7 +170,7 @@ const Day = () => {
             return (
               <Fragment key={i}>
                 {/* Time Cells rs_time: tiempo celda */}
-                <span className="rs__cell rs__header rs__time" style={{ height: CELL_HEIGHT }}>
+                <span className="rs__cell rs__header rs__time" style={{ height: CELL_HEIGHT, justifyContent:"space-around" }}>
                   <p>{format(h, hFormat, { locale })}</p>
                 </span>
 
