@@ -33,7 +33,7 @@ import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFil
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import { SchedulerRef } from "../types";
-
+import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
 function CreateCitaScreen() {
   const calendarRef = useRef<SchedulerRef>(null);
 
@@ -115,7 +115,7 @@ function CreateCitaScreen() {
   const [formServicio, setFormServicio] = useState<ServicioPost>({
     id_Cita: 0,
     idServicio: 0,
-    cantidad: 0,
+    cantidad: 1,
     precio: 0,
     observaciones: "",
     usuario: 0,
@@ -134,7 +134,7 @@ function CreateCitaScreen() {
   });
   const limpiarFormServicios = () => {
     setFormServicio({
-      cantidad: 0,
+      cantidad: 1,
       id_Cita: 0,
       idServicio: 0,
       observaciones: "",
@@ -216,7 +216,7 @@ function CreateCitaScreen() {
           setFormServicio({
             ...formServicio,
             d_servicio: "",
-            cantidad: 0,
+            cantidad: 1,
             observaciones: "",
             idServicio: 0,
           });
@@ -468,17 +468,30 @@ function CreateCitaScreen() {
             <h3>Agregar servicios</h3>
             <AddCircleIcon
               fontSize="large"
+              color="success"
               onClick={() => {
                 setModalProductoSelect(true);
               }}
             />
           </div>
-          <p> Servicio: {formServicio.d_servicio}</p>
+          {/* <h3> Servicio:</h3> */}
+          <TextField
+            variant="filled"
+            label={"Agrega el servicio"}
+            fullWidth
+            disabled
+            size="small"
+            value={formServicio.d_servicio}
+            sx={{ marginBottom: "16px" }}
+          ></TextField>
+          <br />
+          <br />
+          {/* <p> Servicio: {formServicio.d_servicio}</p> */}
           <TextField
             label={"Cantidad"}
             type="number"
             name="cantidad"
-            value={formServicio.cantidad}
+            defaultValue={formServicio.cantidad}
             onChange={(valor) => {
               setFormServicio({ ...formServicio, cantidad: Number(valor.target.value) });
             }}
@@ -501,12 +514,13 @@ function CreateCitaScreen() {
           ></TextField>
           <Button
             variant="contained"
-            color="success"
+            color="info"
             onClick={() => {
               postServicio();
             }}
           >
             Guardar
+            <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
           </Button>
           <br />
           <br />
@@ -536,9 +550,10 @@ function CreateCitaScreen() {
                           <Grid item>
                             <DeleteIcon
                               onClick={() => confirmationDelete(Number(servicio.id))}
-                              style={{ marginLeft: "auto" }}
+                              style={{ marginLeft: "auto", fontSize: 25 }}
                             />
                             <EditIcon
+                              style={{ marginLeft: "auto", fontSize: 25 }}
                               onClick={() => {
                                 setFormEditServicio({
                                   cantidad: servicio.cantidad,
@@ -624,7 +639,7 @@ function CreateCitaScreen() {
         onClose={() => {
           setModalServicioEdit(false);
           setFormServicio({
-            cantidad: 0,
+            cantidad: 1,
             id_Cita: 0,
             idServicio: 0,
             observaciones: "",
@@ -691,7 +706,7 @@ function CreateCitaScreen() {
               onClick={() => {
                 setFormServicio({
                   ...formServicio,
-                  cantidad: 0,
+                  cantidad: 1,
                   idServicio: 0,
                   observaciones: "",
                   precio: 0,

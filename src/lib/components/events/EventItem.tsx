@@ -13,7 +13,7 @@ import { differenceInDaysOmitTime } from "../../helpers/generals";
 import useStore from "../../hooks/useStore";
 import useDragAttributes from "../../hooks/useDragAttributes";
 import axios from "axios";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 interface EventItemProps {
   event: ProcessedEvent;
   multiday: boolean;
@@ -50,7 +50,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const theme = useTheme();
-  const hFormat = hourFormat === "12" ? "hh:mm a" : "HH:mm";
+  const hFormat = hourFormat === "24" ? "hh:mm a" : "HH:mm";
 
   const NextArrow = direction === "rtl" ? ArrowLeftRoundedIcon : ArrowRightRoundedIcon;
   const PrevArrow = direction === "rtl" ? ArrowRightRoundedIcon : ArrowLeftRoundedIcon;
@@ -117,17 +117,26 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
                 <ClearRoundedIcon color="disabled" />
               </IconButton>
             </div>
-            <EventActions
-              event={event}
-              onDelete={handleDelete}
-              onEdit={() => {
-                triggerViewer();
-                triggerDialog(true, event);
-              }}
-              direction={direction}
-              deletable={deletable}
-              editable={editable}
-            />
+            <div style={{ flex: 1, display: "flex", justifyContent: "end" }}>
+              <EventActions
+                event={event}
+                onDelete={handleDelete}
+                onEdit={() => {
+                  triggerViewer();
+                  triggerDialog(true, event);
+                }}
+                direction={direction}
+                deletable={deletable}
+                editable={editable}
+              />
+
+              <IconButton
+                onClick={() => {
+                }}
+              >
+                <AccountCircleIcon></AccountCircleIcon>
+              </IconButton>
+            </div>
           </div>
           {/* COMPONENTE CARD ON PRESS */}
           {viewerTitleComponent instanceof Function ? (

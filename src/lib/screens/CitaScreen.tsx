@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -24,11 +25,13 @@ import { useClientes } from "../hooks/useClientes";
 import axios from "axios";
 import { Eventos } from "../models/Events";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ListTwoToneIcon from "@mui/icons-material/ListTwoTone";
+import HistoryTwoToneIcon from "@mui/icons-material/HistoryTwoTone";
 import { ServicioPost, Servicio } from "../models/Servicio";
 import { EstilistaResponse } from "../models/Estilista";
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-
+import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
@@ -36,7 +39,8 @@ import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridColDef } from "@mui/x-dat
 import CloseIcon from "@mui/icons-material/Close";
 import { Cliente } from "../models/Cliente";
 import { useEstatusCitas } from "../hooks/useEstatusCitas";
-
+import { useHistorialClientes } from "../hooks/useHistorialClientes";
+import ManageSearchTwoToneIcon from "@mui/icons-material/ManageSearchTwoTone";
 function CitaScreen() {
   const [modalCliente, setmodalCliente] = useState(false);
   const [datosParametros, setDatosParametros] = useState({
@@ -202,7 +206,7 @@ function CitaScreen() {
   const [formServicio, setFormServicio] = useState<ServicioPost>({
     id_Cita: 0,
     idServicio: 0,
-    cantidad: 0,
+    cantidad: 1,
     precio: 0,
     observaciones: "",
     usuario: 0,
@@ -248,6 +252,145 @@ function CitaScreen() {
       ),
     },
   ];
+  const columnsProductos4Edit: GridColDef[] = [
+    { field: "descripcion", headerName: "Descripcion", width: 200 },
+    { field: "precio", headerName: "Precio", width: 100 },
+    { field: "tiempo", headerName: "Tiempo", width: 80 },
+    {
+      field: "action",
+      headerName: "Acciones",
+      width: 200,
+      // renderCell: (params) => <span>{params.row.precio}</span>,
+      renderCell: (params) => (
+        <Button
+          variant={"contained"}
+          onClick={() => {
+            setFormServicio({
+              ...formServicio,
+              idServicio: params.row.id,
+              precio: params.row.precio,
+              d_servicio: params.row.descripcion,
+            });
+            setModalProductoSelect(false);
+          }}
+        >
+          Agregar
+        </Button>
+      ),
+    },
+  ];
+  const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
+
+  const [paramsDetalles, setParamsDetalles] = useState({
+    sucursal: 0,
+    numVenta: 0,
+    idProducto: 0,
+    clave: 0,
+    Cve_cliente: 0,
+    fecha: "",
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+  const loadHistorialDetalle = async (
+    cveCliente: number,
+    noVenta: number,
+    idProducto: number,
+    idSucursal: number
+  ) => {
+    await jezaApi
+      .get(
+        `/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`
+      )
+      .then((response) => {
+        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
+        console.log(response.data);
+        // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
+        setHistorialDetalle(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const columnHistorialClientes: GridColDef[] = [
+    {
+      field: "acciones",
+      headerName: "Acciones",
+      renderCell: (params) => (
+        <IconButton
+          size="small"
+          onClick={() => {
+            loadHistorialDetalle(
+              params.row.Cve_cliente,
+              params.row.NumVenta,
+              params.row.idProducto,
+              params.row.sucursal
+            );
+            setParamsDetalles({
+              Cve_cliente: params.row.Cve_cliente,
+              idProducto: params.row.idProducto,
+              numVenta: params.row.NumVenta,
+              sucursal: params.row.NombreSuc,
+              clave: params.row.id,
+              fecha: params.row.Fecha,
+            });
+            setIsModalOpen(true);
+          }}
+        >
+          <ManageSearchTwoToneIcon fontSize="small" />
+        </IconButton>
+      ),
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+    },
+    { field: "Cve_cliente", headerName: "Clave del cliente", resizable: true, minWidth: 150 },
+    { field: "NumVenta", headerName: "Numero de venta", resizable: true },
+    {
+      field: "NombreSuc",
+      headerName: "Nombre de la sucursal",
+
+      resizable: true,
+    },
+    { field: "Fecha", headerName: "Fecha", resizable: true, minWidth: 150 },
+    { field: "Clave", headerName: "Clave", resizable: true },
+    {
+      field: "Producto_Servicio",
+      headerName: "Producto o servicio",
+      resizable: true,
+      minWidth: 150,
+    },
+    { field: "Cantidad", headerName: "Cantidad", resizable: true },
+    { field: "Precio", headerName: "Precio", resizable: true },
+    { field: "Descuento", headerName: "Descuento", resizable: true },
+    { field: "Forma_pago", headerName: "Forma pago", resizable: true, minWidth: 50 },
+    // {
+    //   field: "action",
+    //   headerName: "Acciones",
+    //   width: 200,
+    //   // renderCell: (params) => <span>{params.row.precio}</span>,
+    //   renderCell: (params) => (
+    //     <Button
+    //       variant={"contained"}
+    //       onClick={() => {
+    //         setFormServicio({
+    //           ...formServicio,
+    //           idServicio: params.row.id,
+    //           precio: params.row.precio,
+    //           d_servicio: params.row.descripcion,
+    //         });
+    //         setModalProductoSelect(false);
+    //       }}
+    //     >
+    //       Agregar
+    //     </Button>
+    //   ),
+    // },
+  ];
   const columnClientes: GridColDef[] = [
     { field: "descripcion", headerName: "Descripcion", width: 200 },
     { field: "precio", headerName: "Precio", width: 100 },
@@ -275,6 +418,8 @@ function CitaScreen() {
     },
   ];
   const [modalProductoSelect, setModalProductoSelect] = useState(false);
+  const [modalProductoSelectEdit, setModalProductoSelectEdit] = useState(false);
+  const [modalHistorialCliente, setModalHistorialCliente] = useState(false);
   const postServicio = () => {
     if (formServicio.cantidad > 0 && formServicio.idServicio > 0 && formServicio.observaciones) {
       jezaApi
@@ -287,7 +432,7 @@ function CitaScreen() {
           setFormServicio({
             ...formServicio,
             d_servicio: "",
-            cantidad: 0,
+            cantidad: 1,
             observaciones: "",
             idServicio: 0,
           });
@@ -310,7 +455,7 @@ function CitaScreen() {
           setFormServicio({
             ...formServicio,
             d_servicio: "",
-            cantidad: 0,
+            cantidad: 1,
             observaciones: "",
             idServicio: 0,
           });
@@ -378,8 +523,27 @@ function CitaScreen() {
     setid(id);
     // deleteServicio(id);
   };
+
+  const { historialClientes } = useHistorialClientes({
+    cveCliente: Number(datosParametros.idClienteSeparada),
+  });
+
   return (
     <>
+      <div style={{ right: 10, top: 10, position: "absolute" }}>
+        <Button variant="contained" onClick={() => setModalHistorialCliente(true)}>
+          Historial del cliente
+          <HistoryTwoToneIcon style={{ marginLeft: 5 }} fontSize="medium"></HistoryTwoToneIcon>
+        </Button>
+        <Button
+          variant="contained"
+          style={{ marginLeft: 10 }}
+          onClick={() => setModalCitaEdit(true)}
+        >
+          Editar cita
+          <ListTwoToneIcon style={{ marginLeft: 5 }} fontSize="medium"></ListTwoToneIcon>
+        </Button>
+      </div>
       <DialogComponent
         openModal={successInfo}
         onClose={() => setSuccessInfo(false)}
@@ -403,11 +567,66 @@ function CitaScreen() {
         salir={deleteInfoFunction}
       />
       <div style={{ marginRight: 25, marginLeft: 25 }}>
-        <div style={{ right: 10, top: 10, position: "absolute" }}>
-          <MoreVertIcon onClick={() => setModalCitaEdit(true)}> </MoreVertIcon>
-        </div>
+        <br />
+        <br />
         <hr />
-        <h3> Servicios... </h3>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+          <h3>Agregar servicios</h3>
+          <AddCircleIcon
+            fontSize="large"
+            color="success"
+            onClick={() => {
+              setModalProductoSelect(true);
+            }}
+          />
+        </div>
+        <TextField
+          variant="filled"
+          label={"Agrega el servicio"}
+          fullWidth
+          disabled
+          size="small"
+          value={formServicio.d_servicio}
+          sx={{ marginBottom: "16px" }}
+        ></TextField>
+        <br />
+        <br />
+        <TextField
+          label="Cantidad"
+          name="cantidad"
+          type="number"
+          value={formServicio.cantidad}
+          onChange={handleChangeServicios}
+          fullWidth
+          size="small"
+          sx={{ marginBottom: "16px" }}
+        />
+        <br />
+        <br />
+        <TextField
+          label="Observaciones"
+          name="observaciones"
+          value={formServicio.observaciones}
+          onChange={handleChangeServicios}
+          fullWidth
+          size="small"
+          sx={{ marginBottom: "16px" }}
+        />
+        <Button
+          variant="contained"
+          onClick={() => {
+            postServicio();
+          }}
+        >
+          Guardar servicio
+          <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
+        </Button>
+        <br />
+        <br />
+
+        <hr />
+        <br />
+        <h3> Servicios agregados </h3>
         {/* ESCOJER SERVICIO */}
         {datasServicios.length > 0 ? (
           datasServicios.map((servicio: Servicio, index: number) => (
@@ -458,45 +677,6 @@ function CitaScreen() {
         ) : (
           <p>No hay servicios en proceso</p>
         )}
-        <hr />
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-          <h3>Agregar servicios</h3>
-          <AddCircleIcon
-            fontSize="large"
-            onClick={() => {
-              setModalProductoSelect(true);
-            }}
-          />
-        </div>
-        <p> Servicio: {formServicio.d_servicio}</p>
-        <TextField
-          label="Cantidad"
-          name="cantidad"
-          value={formServicio.cantidad}
-          onChange={handleChangeServicios}
-          fullWidth
-          size="small"
-          sx={{ marginBottom: "16px" }}
-        />
-        <br />
-        <br />
-        <TextField
-          label="Observaciones"
-          name="observaciones"
-          value={formServicio.observaciones}
-          onChange={handleChangeServicios}
-          fullWidth
-          size="small"
-          sx={{ marginBottom: "16px" }}
-        />
-        <Button
-          variant="contained"
-          onClick={() => {
-            postServicio();
-          }}
-        >
-          Guardar
-        </Button>
       </div>
 
       {/* MODALS COMIENZO */}
@@ -710,7 +890,7 @@ function CitaScreen() {
         onClose={() => {
           setModalServicioEdit(false);
           setFormServicio({
-            cantidad: 0,
+            cantidad: null,
             id_Cita: 0,
             idServicio: 0,
             observaciones: "",
@@ -737,15 +917,22 @@ function CitaScreen() {
         >
           <h2> Edición de servicio... </h2>
           <FormControl sx={{ m: 1, width: "95%" }} variant="outlined">
-            <Typography> Servicio </Typography>
-            <TextField
-              size="small"
-              value={formServicio.d_servicio}
-              disabled
-              sx={{
-                backgroundColor: "lightgray",
-              }}
-            ></TextField>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item xs={8}>
+                <Typography> Servicio </Typography>
+                <TextField
+                  size="small"
+                  value={formServicio.d_servicio}
+                  disabled
+                  sx={{
+                    backgroundColor: "lightgray",
+                  }}
+                ></TextField>
+              </Grid>
+              <Grid item xs={2}>
+                <Button onClick={() => setModalProductoSelectEdit(true)}>Modificar servicio</Button>
+              </Grid>
+            </Grid>
             <br />
             <Typography> Cantidad </Typography>
             <TextField
@@ -773,7 +960,7 @@ function CitaScreen() {
               color="error"
               onClick={() => {
                 setFormServicio({
-                  cantidad: 0,
+                  cantidad: null,
                   id_Cita: 0,
                   idServicio: 0,
                   observaciones: "",
@@ -841,6 +1028,183 @@ function CitaScreen() {
               }}
             ></CloseIcon>
           </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={modalHistorialCliente}
+        onClose={() => {
+          setModalHistorialCliente(false);
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%",
+            height: "70%",
+            backgroundColor: "#fff",
+            padding: 16,
+            borderRadius: 4,
+            overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
+          }}
+        >
+          <h2> Historial de citas </h2>
+          <DataGrid
+            rows={historialClientes}
+            columns={columnHistorialClientes}
+            autoHeight
+            getRowId={(row) => row.Cve_cliente}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
+            disableRowSelectionOnClick
+          ></DataGrid>
+          <br />
+          <br />
+          <br />
+
+          {/* <Button onClick={() => edit()}> Guardar </Button> */}
+          <div style={{ position: "absolute", top: 25, right: 25 }}>
+            <CloseIcon
+              onClick={() => {
+                setModalProductoSelect(false);
+              }}
+            ></CloseIcon>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        open={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%",
+            height: "70%",
+            backgroundColor: "#fff",
+            padding: 16,
+            borderRadius: 4,
+            overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
+          }}
+        >
+          <h2>Historial detalle</h2>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            <hr />
+            <table style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <hr />
+
+            <br />
+            <table style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historialDetalle.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Insumo}</td>
+                    <td>{item.Cant}</td>
+                    <td>{item.precio}</td>
+                    <td>{item.importe}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div>
+              <p style={{ textAlign: "left" }}>
+                {/* <strong>Total: ${totalImportes.toFixed(2)}</strong> */}
+              </p>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={modalProductoSelectEdit}
+        onClose={() => {
+          setModalProductoSelectEdit(false);
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%",
+            maxHeight: "90%",
+            backgroundColor: "#fff",
+            padding: 16,
+            borderRadius: 4,
+            overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
+          }}
+        >
+          <h2> Selección de servicio </h2>
+          <div style={{ position: "fixed", top: 25, right: 25 }}>
+            <CloseIcon
+              onClick={() => {
+                setModalProductoSelect(false);
+              }}
+            ></CloseIcon>
+          </div>
+          <DataGrid
+            rows={dataProductos4}
+            columns={columnsProductos4Edit}
+            autoHeight
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 8,
+                },
+              },
+            }}
+            pageSizeOptions={[8]}
+            disableRowSelectionOnClick
+          ></DataGrid>
+          <br />
+          <br />
+          <br />
+
+          {/* <Button onClick={() => edit()}> Guardar </Button> */}
         </div>
       </Modal>
     </>

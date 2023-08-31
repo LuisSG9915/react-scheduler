@@ -23,7 +23,7 @@ export interface Servicio {
 export interface ServicioPost {
   id_Cita: number;
   idServicio: number;
-  cantidad: number;
+  cantidad: number | null;
   precio: number;
   observaciones: string;
   usuario: number;

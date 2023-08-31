@@ -7,6 +7,7 @@ export interface Eventos {
   end: Date;
   admin_id: number;
   color: string | undefined;
+  disabled?: boolean;
   // NUEVOS AGREGADOS
   horaFin?: Date | null;
   fechaCita?: Date | null | string;

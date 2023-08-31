@@ -114,7 +114,7 @@ const Day = () => {
               key={event.event_id}
               className="rs__multi_day"
               style={{
-                top: i * MULTI_DAY_EVENT_HEIGHT,
+                top: i * MULTI_DAY_EVENT_HEIGHT * 1.2,
                 width: "99.9%",
                 overflowX: "hidden",
               }}

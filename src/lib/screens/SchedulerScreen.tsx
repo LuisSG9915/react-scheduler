@@ -134,38 +134,6 @@ function SchedulerScreen() {
     }
   };
 
-  useEffect(() => {
-    changeLoadingValue(true);
-    const formattedData = datas.map((evento: Eventos) => ({
-      ...evento,
-      start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
-      end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
-      admin_id: evento.idEstilista ? evento.idEstilista : 3,
-      event_id: evento.id ? evento.id : 0,
-      title: evento.idCliente.toString() + "," + evento.tiempo,
-      description: evento.nombreCliente,
-      color:
-        evento.estatus === 1
-          ? COLOR_ESTATUS_CITAS[0]
-          : evento.estatus === 2
-          ? COLOR_ESTATUS_CITAS[1]
-          : evento.estatus === 3
-          ? COLOR_ESTATUS_CITAS[2]
-          : evento.estatus === 4
-          ? COLOR_ESTATUS_CITAS[3]
-          : evento.estatus === 5
-          ? COLOR_ESTATUS_CITAS[4]
-          : evento.estatus === 6
-          ? COLOR_ESTATUS_CITAS[5]
-          : evento.estatus === 7
-          ? COLOR_ESTATUS_CITAS[6]
-          : evento.estatus === 8
-          ? COLOR_ESTATUS_CITAS[7]
-          : "lightblue",
-    }));
-    setFormattedDatas(formattedData);
-  }, [datas]);
-
   const changeLoadingValue = (newLoadingValue) => {
     if (calendarRef.current && calendarRef.current.scheduler) {
       calendarRef.current.scheduler.loading = newLoadingValue;
@@ -216,60 +184,63 @@ function SchedulerScreen() {
 
   const peticiones = async () => {
     await peticionEstilista().then(async () => {
-      const temp = new Date(nuevaFechaPrueba);
-      const formattedDate = format(temp, "yyyyMMdd");
-      try {
-        const response = axios.get(
-          `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
-            dataEvent.sucursal ? dataEvent.sucursal : 21
-          }&estilista=%&f1=${formattedDate}&f2=${formattedDate}&cliente=%&estatus=%`
-        );
+      if (dataEvent.sucursal > 20) {
+        const temp = new Date(nuevaFechaPrueba);
+        const formattedDate = format(temp, "yyyyMMdd");
+        try {
+          const response = axios.get(
+            `http://cbinfo.no-ip.info:9089/Cita?id=%&suc=${
+              dataEvent.sucursal ? dataEvent.sucursal : 21
+            }&estilista=%&f1=${formattedDate}&f2=${formattedDate}&cliente=%&estatus=%`
+          );
 
-        const formattedData = (await response).data.map((evento: Eventos) => ({
-          ...evento,
-          start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
-          end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
-          admin_id: evento.idEstilista ? evento.idEstilista : 3,
-          event_id: evento.id ? evento.id : 0,
-          title:
-            evento.idCliente.toString() +
-            "," +
-            evento.tiempo +
-            "," +
-            evento.idEstilista +
-            "," +
-            evento.estatus,
-          description: evento.nombreCliente,
-          color:
-            evento.estatus === 1
-              ? COLOR_ESTATUS_CITAS[0]
-              : evento.estatus === 2
-              ? COLOR_ESTATUS_CITAS[1]
-              : evento.estatus === 3
-              ? COLOR_ESTATUS_CITAS[2]
-              : evento.estatus === 1007
-              ? COLOR_ESTATUS_CITAS[5]
-              : evento.estatus === 1008
-              ? COLOR_ESTATUS_CITAS[4]
-              : evento.estatus === 6
-              ? COLOR_ESTATUS_CITAS[3]
-              : evento.estatus === 1005
-              ? COLOR_ESTATUS_CITAS[2]
-              : evento.estatus === 4
-              ? COLOR_ESTATUS_CITAS[3]
-              : "grey",
-        }));
-        setTimeout(() => {
-          setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
-        }, 500);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+          const formattedData = (await response).data.map((evento: Eventos) => ({
+            ...evento,
+            start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
+            end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
+            admin_id: evento.idEstilista ? evento.idEstilista : 3,
+            event_id: evento.id ? evento.id : 0,
+            title:
+              evento.idCliente.toString() +
+              "," +
+              evento.tiempo +
+              "," +
+              evento.idEstilista +
+              "," +
+              evento.estatus,
+            description: evento.nombreCliente,
+            disabled: evento.estatus === 1006 ? true : false,
+            color:
+              evento.estatus === 1
+                ? COLOR_ESTATUS_CITAS[0]
+                : evento.estatus === 2
+                ? COLOR_ESTATUS_CITAS[1]
+                : evento.estatus === 3
+                ? COLOR_ESTATUS_CITAS[2]
+                : evento.estatus === 1007
+                ? COLOR_ESTATUS_CITAS[5]
+                : evento.estatus === 1008
+                ? COLOR_ESTATUS_CITAS[4]
+                : evento.estatus === 6
+                ? COLOR_ESTATUS_CITAS[3]
+                : evento.estatus === 1005
+                ? COLOR_ESTATUS_CITAS[2]
+                : evento.estatus === 4
+                ? COLOR_ESTATUS_CITAS[3]
+                : "grey",
+          }));
+          setTimeout(() => {
+            setRefreshKey((key) => key + 1); // Actualiza el estado local para forzar la actualización del componente Scheduler
+          }, 500);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
 
-        setFormattedDatas(formattedData);
-        // changeLoadingValue(false);
-      } catch (error) {
-        console.error(error);
+          setFormattedDatas(formattedData);
+          // changeLoadingValue(false);
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   };
@@ -291,8 +262,9 @@ function SchedulerScreen() {
           "No se pueden actualizar citas en un horario anterior al actual, favor de intentarlo de nuevo",
         title: "Advertencia",
       });
+      setVoidInfo(true);
       setTimeout(() => {
-        setVoidInfo(true);
+        setLoading(false);
       }, 2500);
     } else if (Number(cita.estatus) === 4) {
       setVoidInfo(true);
@@ -300,6 +272,7 @@ function SchedulerScreen() {
         subtitle: "No se puede modificar una cita en proceso, favor de verificar la cita en ventas",
         title: "Advertencia",
       });
+      setLoading(false);
     } else {
       axios
         .put(
@@ -370,6 +343,10 @@ function SchedulerScreen() {
     setLoading(true);
     peticiones();
   }, [dataEvent.sucursal]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   peticiones();
+  // }, []);
 
   useEffect(() => {
     peticionEstilista();
@@ -493,6 +470,8 @@ function SchedulerScreen() {
         onConfirm={handleConfirmEvent}
         onDelete={handleDeleteEvent}
         customEditor={({ close, state }) => {
+          const cadenaEstatus = state.title.value.split(",");
+          const estatusState = cadenaEstatus[3];
           const fecha = new Date();
           if (
             state.start.value < fecha.setMinutes(fecha.getMinutes() - 30) &&
@@ -510,13 +489,27 @@ function SchedulerScreen() {
             if (Number(idSuc) === Number(dataEvent.sucursal)) {
               if (state.description.value.length > 0) {
                 // EDICIÓN
+                // console.log(state.title.value);
+                // handleOpenNewWindowCitaScreen({
+                //   idCita: state.event_id.value,
+                //   idUser: state.admin_id.value,
+                //   idCliente: state.title.value,
+                //   fecha: state.start.value,
+                // });
 
-                handleOpenNewWindowCitaScreen({
-                  idCita: state.event_id.value,
-                  idUser: state.admin_id.value,
-                  idCliente: state.title.value,
-                  fecha: state.start.value,
-                });
+                if (Number(estatusState) == 4) {
+                  setMessageDialog({
+                    subtitle: "No cuenta con permisos para realizar acciones en otras sucursales",
+                    title: "Atención",
+                  });
+                } else {
+                  handleOpenNewWindowCitaScreen({
+                    idCita: state.event_id.value,
+                    idUser: state.admin_id.value,
+                    idCliente: state.title.value,
+                    fecha: state.start.value,
+                  });
+                }
                 // CREACIÓN
               } else {
                 handleOpenNewWindowCreateCitaScreen({

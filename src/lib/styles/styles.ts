@@ -77,11 +77,10 @@ export const TableGrid = styled("div")<{ days: number; sticky?: string; indent?:
         left: 0,
         zIndex: 999,
         fontSize: "14px",
-
-        [theme.breakpoints.down("md")]: {
-          writingMode: "vertical-rl",
+        [theme.breakpoints.down("lg")]: {
+          writingMode: "vertical-lr",
           fontStyle: "italic",
-          fontSize: "10px",
+          fontSize: "12px",
         },
       },
       "& > button": {
@@ -125,8 +124,8 @@ export const EventItemPapper = styled(Paper)<{ color?: string; disabled?: boolea
     width: "99.5%",
     height: "100%",
     display: "block",
-    background: disabled ? "#d0d0d0" : color || theme.palette.primary.main,
-    color: disabled ? "#808080" : theme.palette.primary.contrastText,
+    background: disabled ? color : color || theme.palette.primary.main,
+    color: disabled ? color : theme.palette.primary.contrastText,
     cursor: disabled ? "not-allowed" : "pointer",
     border: "1px solid #fff",
     overflow: "hidden",
