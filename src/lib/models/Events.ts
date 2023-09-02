@@ -12,7 +12,8 @@ export interface Eventos {
   horaFin?: Date | null;
   fechaCita?: Date | null | string;
   idUsuario?: number;
-
+  servicioDescripcion?: string;
+  numeroTelefono?: string;
   cia?: number;
   sucursal?: number;
   d_sucursal?: string;

@@ -236,7 +236,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           {`${event.description}`}
         </Typography>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
-          {`${event.description}`}
+          {`${event.numeroTelefono}`}
         </Typography>
 
         {showdate && (

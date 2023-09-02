@@ -183,15 +183,28 @@ function SchedulerScreen() {
     return event;
   };
   const { dataClientes, fetchClientes } = useClientes();
-  const getCiaForeignKey = (idTableCia: number) => {
-    const cia = dataClientes.find((cia: any) => cia.id_cliente === idTableCia);
-    return cia ? cia.nombre : "Sin Compania";
-  };
   useEffect(() => {
     fetchClientes();
-    const temp = getCiaForeignKey(26289);
-    alert(temp);
+
   }, []);
+
+  const clientesFormatted = (data, idCliente) => {
+    const buscarIdProducto = () => {
+      const objetoEncontrado = data.find((obj) => obj.id_cliente === idCliente);
+
+      if (objetoEncontrado) {
+        console.log(objetoEncontrado);
+        return [objetoEncontrado.telefono];
+      } else {
+        return "a";
+      }
+    };
+    const idProductosEncontrados = buscarIdProducto();
+    return {
+      datosFormateados: data,
+      idProductosEncontrados,
+    };
+  };
 
   const peticiones = async () => {
     await peticionEstilista().then(async () => {
@@ -211,7 +224,8 @@ function SchedulerScreen() {
             end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
             admin_id: evento.idEstilista ? evento.idEstilista : 3,
             event_id: evento.id ? evento.id : 0,
-            idCliente: evento.idCliente,
+            numeroTelefono: clientesFormatted(dataClientes, Number(evento.idCliente))
+              .idProductosEncontrados,
             title:
               evento.idCliente.toString() +
               "," +
