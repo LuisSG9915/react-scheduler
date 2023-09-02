@@ -146,17 +146,6 @@ const Day = () => {
         {/* Header */}
         <TableGrid days={1} ref={headersRef} sticky="1">
           <span className="rs__cell"></span>
-          <span
-            className={`rs__cell rs__header ${isToday(selectedDate) ? "rs__today_cell" : ""}`}
-            style={{ height: headerHeight }}
-          >
-            {typeof headRenderer === "function" ? (
-              <div>{headRenderer(selectedDate)}</div>
-            ) : (
-              <TodayTypo date={selectedDate} locale={locale} />
-            )}
-            {renderMultiDayEvents(recousedEvents)}
-          </span>
         </TableGrid>
         <TableGrid days={1} ref={bodyRef}>
           {/* Body */}
@@ -170,7 +159,10 @@ const Day = () => {
             return (
               <Fragment key={i}>
                 {/* Time Cells rs_time: tiempo celda */}
-                <span className="rs__cell rs__header rs__time" style={{ height: CELL_HEIGHT, justifyContent:"space-around" }}>
+                <span
+                  className="rs__cell rs__header rs__time"
+                  style={{ height: CELL_HEIGHT, justifyContent: "space-around" }}
+                >
                   <p>{format(h, hFormat, { locale })}</p>
                 </span>
 

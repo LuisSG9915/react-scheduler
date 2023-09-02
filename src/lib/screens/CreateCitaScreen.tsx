@@ -21,7 +21,7 @@ import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format, startOfToday, setHours, parse } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { useClientes } from "../hooks/useClientes";
+import { useClientesWithUseEffect } from "../hooks/useClientesWithUseEffect";
 import { Eventos } from "../models/Events";
 import axios from "axios";
 import { Servicio, ServicioPost } from "../models/Servicio";
@@ -37,7 +37,7 @@ import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
 function CreateCitaScreen() {
   const calendarRef = useRef<SchedulerRef>(null);
 
-  const { dataClientes } = useClientes();
+  const { dataClientes } = useClientesWithUseEffect();
   const [modalCliente, setmodalCliente] = useState(false);
   const [datasServicios, setDatasServicios] = useState<[]>([]);
 
@@ -205,10 +205,14 @@ function CreateCitaScreen() {
     },
   ];
   const postServicio = () => {
-    if (formServicio.cantidad !== 0 && formServicio.idServicio > 0 && formServicio.observaciones) {
+    if (formServicio.cantidad !== 0 && formServicio.idServicio > 0) {
       jezaApi
         .post(
-          `/CitaServicio?id_Cita=${formServicio.id_Cita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idUser}`
+          `/CitaServicio?id_Cita=${formServicio.id_Cita}&idServicio=${
+            formServicio.idServicio
+          }&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${
+            formServicio.observaciones ? formServicio.observaciones : "."
+          }&usuario=${datosParametros.idUser}`
         )
         .then((response) => {
           setSuccessInfo(true);
@@ -230,7 +234,11 @@ function CreateCitaScreen() {
     if (formEditServicio.cantidad > 0) {
       jezaApi
         .put(
-          `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${formEditServicio.idServicio}&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${formEditServicio.observaciones}&usuario=${datosParametros.idUser}`
+          `/CitaServicio?id=${formEditServicio.id}&id_Cita=${formEditServicio.id_Cita}&idServicio=${
+            formEditServicio.idServicio
+          }&cantidad=${formEditServicio.cantidad}&precio=${formEditServicio.precio}&observaciones=${
+            formEditServicio.observaciones ? formEditServicio.observaciones : "."
+          }&usuario=${datosParametros.idUser}`
         )
         .then(() => {
           setSuccessInfo(true);
@@ -482,7 +490,7 @@ function CreateCitaScreen() {
             disabled
             size="small"
             value={formServicio.d_servicio}
-            sx={{ marginBottom: "16px", justifyContent:"flex-start" }}
+            sx={{ marginBottom: "16px", justifyContent: "flex-start" }}
           ></TextField>
           <br />
           <br />

@@ -52,6 +52,9 @@ interface CalendarEvent {
   description?: string;
   start: any;
   end: any;
+  servicioDescripcion?: string;
+  numeroTelefono?: string;
+  idCliente?: number;
   disabled?: boolean;
   color?: string;
   editable?: boolean;

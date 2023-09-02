@@ -14,6 +14,9 @@ import useStore from "../../hooks/useStore";
 import useDragAttributes from "../../hooks/useDragAttributes";
 import axios from "axios";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { handleOpenVentas } from "../../functions/NewWindow";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useClientes } from "../../hooks/useClientes";
 interface EventItemProps {
   event: ProcessedEvent;
   multiday: boolean;
@@ -91,7 +94,11 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
       triggerLoading(false);
     }
   };
-
+  const { dataClientes } = useClientes();
+  const getCiaForeignKey = (idTableCia: number) => {
+    const cia = dataClientes.find((cia: any) => cia.id === idTableCia);
+    return cia ? cia.nombre : "Sin Compania";
+  };
   const renderViewer = () => {
     const idKey = resourceFields.idField;
     const hasResource = resources.filter((res) =>
@@ -132,9 +139,10 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
               <IconButton
                 onClick={() => {
+                  handleOpenVentas();
                 }}
               >
-                <AccountCircleIcon></AccountCircleIcon>
+                <ShoppingCartIcon></ShoppingCartIcon>
               </IconButton>
             </div>
           </div>
@@ -224,6 +232,9 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
     let item = (
       <div style={{ padding: "2px 6px" }}>
+        <Typography style={{ fontSize: 11, color: "black" }} noWrap>
+          {`${event.description}`}
+        </Typography>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
           {`${event.description}`}
         </Typography>

@@ -41,6 +41,7 @@ import { Cliente } from "../models/Cliente";
 import { useEstatusCitas } from "../hooks/useEstatusCitas";
 import { useHistorialClientes } from "../hooks/useHistorialClientes";
 import ManageSearchTwoToneIcon from "@mui/icons-material/ManageSearchTwoTone";
+import { useClientesWithUseEffect } from "../hooks/useClientesWithUseEffect";
 function CitaScreen() {
   const [modalCliente, setmodalCliente] = useState(false);
   const [datosParametros, setDatosParametros] = useState({
@@ -54,6 +55,7 @@ function CitaScreen() {
     idEstilista: 0,
     idRec: 0,
     idSuc: 0,
+    flag: 0,
   });
   useEffect(() => {
     const idCita = new URLSearchParams(window.location.search).get("idCita");
@@ -65,7 +67,9 @@ function CitaScreen() {
     const idClienteSeparada = cadenaClienteTiempo[0];
     const tiempoSeparada = cadenaClienteTiempo[1];
     const estilistaSeparada = cadenaClienteTiempo[2];
+    const estatus = cadenaClienteTiempo[3];
     const idRec = new URLSearchParams(window.location.search).get("idRec");
+    const flag = new URLSearchParams(window.location.search).get("flag");
 
     const getCiaForeignKey = () => {
       const cliente = dataClientes.find((cia: Cliente) => cia.id_cliente === Number(idCliente));
@@ -82,7 +86,9 @@ function CitaScreen() {
       idEstilista: Number(estilistaSeparada),
       idSuc: Number(idSuc),
       idRec: Number(idRec),
+      flag: Number(flag),
     });
+    setDataEvent({ ...dataEvent, idEstatus: Number(estatus) });
   }, []);
   const clavesEmpleados = ["4", "5", "9", "10"];
   const { estatusCitas } = useEstatusCitas();
@@ -136,9 +142,9 @@ function CitaScreen() {
     descripcionEstatus: "",
     fechaCambio: "",
     idcolor: 0,
-    idEstatus: 1,
+    idEstatus: 0,
   });
-  const { dataClientes } = useClientes();
+  const { dataClientes } = useClientesWithUseEffect();
 
   const [modalCitaEdit, setModalCitaEdit] = useState(false);
   const handleChangeSelect = (event: SelectChangeEvent<number>) => {
@@ -439,10 +445,14 @@ function CitaScreen() {
   const [modalProductoSelectEdit, setModalProductoSelectEdit] = useState(false);
   const [modalHistorialCliente, setModalHistorialCliente] = useState(false);
   const postServicio = () => {
-    if (formServicio.cantidad > 0 && formServicio.idServicio > 0 && formServicio.observaciones) {
+    if (formServicio.cantidad > 0 && formServicio.idServicio > 0) {
       jezaApi
         .post(
-          `/CitaServicio?id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idSuc}`
+          `/CitaServicio?id_Cita=${datosParametros.idCita}&idServicio=${
+            formServicio.idServicio
+          }&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${
+            formServicio.observaciones ? formServicio.observaciones : "."
+          }&usuario=${datosParametros.idSuc}`
         )
         .then((response) => {
           setSuccessInfo(true);
@@ -461,10 +471,14 @@ function CitaScreen() {
   };
   const [modalServicioEdit, setModalServicioEdit] = useState(false);
   const putServicio = () => {
-    if (formServicio.cantidad > 0 && formServicio.observaciones) {
+    if (formServicio.cantidad > 0) {
       jezaApi
         .put(
-          `/CitaServicio?id=${formServicio.id}&id_Cita=${datosParametros.idCita}&idServicio=${formServicio.idServicio}&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${formServicio.observaciones}&usuario=${datosParametros.idRec}`
+          `/CitaServicio?id=${formServicio.id}&id_Cita=${datosParametros.idCita}&idServicio=${
+            formServicio.idServicio
+          }&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${
+            formServicio.observaciones ? formServicio.observaciones : "."
+          }&usuario=${datosParametros.idRec}`
         )
         .then(() => {
           setSuccessInfo(true);
@@ -555,10 +569,11 @@ function CitaScreen() {
           name="idEstatus"
           onChange={handleChangeEstatusCita}
           size="small"
+          disabled={datosParametros.flag === 1 ? true : false}
         >
           <MenuItem value={0}> Escoja un estado </MenuItem>
-          {estatusCitas.map((status) => (
-            <MenuItem key={status.id} value={status.id}>
+          {estatusCitas.map((status, index) => (
+            <MenuItem key={status.id + index} value={status.id}>
               {status.descripcionEstatus}
             </MenuItem>
           ))}
@@ -566,6 +581,7 @@ function CitaScreen() {
         <Button
           style={{ marginLeft: 5 }}
           variant="contained"
+          disabled={datosParametros.flag === 1 ? true : false}
           onClick={() => setModalHistorialCliente(true)}
         >
           Historial
@@ -575,6 +591,7 @@ function CitaScreen() {
           variant="contained"
           style={{ marginLeft: 10 }}
           onClick={() => setModalCitaEdit(true)}
+          disabled={datosParametros.flag === 1 ? true : false}
         >
           Edición cita
           <ListTwoToneIcon style={{ marginLeft: 5 }} fontSize="medium"></ListTwoToneIcon>
@@ -642,6 +659,7 @@ function CitaScreen() {
               type="number"
               value={formServicio.cantidad}
               onChange={handleChangeServicios}
+              disabled={datosParametros.flag === 1 ? true : false}
               fullWidth
               size="small"
               sx={{ marginBottom: "16px" }}
@@ -653,12 +671,14 @@ function CitaScreen() {
               name="observaciones"
               value={formServicio.observaciones}
               onChange={handleChangeServicios}
+              disabled={datosParametros.flag === 1 ? true : false}
               fullWidth
               size="small"
               sx={{ marginBottom: "16px" }}
             />
             <Button
               variant="contained"
+              disabled={datosParametros.flag === 1 ? true : false}
               onClick={() => {
                 postServicio();
               }}
@@ -734,30 +754,12 @@ function CitaScreen() {
           </Grid>
         </Grid>
         <hr />
-        {/* <div style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
-          <h3>Cambiar estado de la cita</h3>
-          <FormControl sx={{ width: "100%" }} variant="outlined">
-            <Select value={dataEvent.idEstatus} name="idEstatus" onChange={handleChangeSelect}>
-              <MenuItem value={0}> Escoja un estado </MenuItem>
-              {estatusCitas.map((status) => (
-                <MenuItem key={status.id} value={status.id}>
-                  {status.descripcionEstatus}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <br />
-          <br />
-          <Button
-            variant="contained"
-            onClick={() => {
-              postServicio();
-            }}
-          >
-            Guardar nuevo estado
-            <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
-          </Button>
-        </div> */}
+        {datosParametros.flag === 1 ? (
+          <h2 style={{ textAlign: "center" }}>
+            No puede realizar ediciones a citas en proceso y ya finzalizadas, favor de contactar al
+            administrador
+          </h2>
+        ) : null}
       </div>
 
       {/* MODALS COMIENZO */}
@@ -820,7 +822,7 @@ function CitaScreen() {
           }}
         >
           <h2> Edición de citas </h2>
-          <p>Cambiar estado de cita</p>
+          {/* <p>Cambiar estado de cita</p>
           <FormControl sx={{ width: "100%" }} variant="outlined">
             <Select value={dataEvent.idEstatus} name="idEstatus" onChange={handleChangeSelect}>
               <MenuItem value={0}> Escoja un estado </MenuItem>
@@ -830,9 +832,7 @@ function CitaScreen() {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
-          <br />
-          <br />
+          </FormControl> */}
           <Typography> Cambiar la fecha </Typography>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateTimePicker

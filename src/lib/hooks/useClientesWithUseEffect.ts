@@ -3,7 +3,7 @@ import { AxiosResponse } from "axios";
 import { Cliente } from "../models/Cliente";
 import { jezaApi } from "../api/jezaApi";
 
-export const useClientes = () => {
+export const useClientesWithUseEffect = () => {
   const [dataClientes, setDataClientes] = useState<Cliente[]>([]);
 
   const fetchClientes = async () => {
@@ -16,9 +16,9 @@ export const useClientes = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchClientes();
-  // }, []);
+  useEffect(() => {
+    fetchClientes();
+  }, []);
 
   return { dataClientes, fetchClientes, setDataClientes };
 };

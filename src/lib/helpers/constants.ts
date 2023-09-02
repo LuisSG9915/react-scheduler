@@ -9,4 +9,5 @@ export const COLOR_ESTATUS_CITAS = [
   "#af92f9",
   "#ffa6f1",
   "#ff0000",
+  ""
 ];
