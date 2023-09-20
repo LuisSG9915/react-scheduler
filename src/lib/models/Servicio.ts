@@ -29,4 +29,5 @@ export interface ServicioPost {
   usuario: number;
   d_servicio?: string;
   id?: number;
+  tiempo?: number;
 }

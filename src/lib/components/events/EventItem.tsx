@@ -139,7 +139,11 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
 
               <IconButton
                 onClick={() => {
-                  handleOpenVentas();
+                  console.log(event);
+                  handleOpenVentas(
+                    event?.idCliente ? Number(event?.idCliente) : 0,
+                    event?.nombreCliente
+                  );
                 }}
               >
                 <ShoppingCartIcon></ShoppingCartIcon>

@@ -16,15 +16,16 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  FormGroup,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import React, { useEffect, useState } from "react";
 import { format, startOfToday, setHours } from "date-fns";
-import { useClientes } from "../hooks/useClientes";
 import axios from "axios";
 import { Eventos } from "../models/Events";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ListTwoToneIcon from "@mui/icons-material/ListTwoTone";
 import HistoryTwoToneIcon from "@mui/icons-material/HistoryTwoTone";
 import { ServicioPost, Servicio } from "../models/Servicio";
@@ -35,7 +36,7 @@ import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
-import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import { Cliente } from "../models/Cliente";
 import { useEstatusCitas } from "../hooks/useEstatusCitas";
@@ -56,6 +57,7 @@ function CitaScreen() {
     idRec: 0,
     idSuc: 0,
     flag: 0,
+    estatus: 0,
   });
   useEffect(() => {
     const idCita = new URLSearchParams(window.location.search).get("idCita");
@@ -87,6 +89,7 @@ function CitaScreen() {
       idSuc: Number(idSuc),
       idRec: Number(idRec),
       flag: Number(flag),
+      estatus: Number(estatus),
     });
     setDataEvent({ ...dataEvent, idEstatus: Number(estatus) });
   }, []);
@@ -166,6 +169,42 @@ function CitaScreen() {
   const [modalEstilista, setModalEstilista] = useState(false);
 
   const [flagCita, setFlagCita] = useState(false);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente>({
+    ciudad: "",
+    claveRegistroMovil: "",
+    colonia: "",
+    correo_factura: "",
+    cp: "",
+    domicilio: "",
+    email: "",
+    estado: "",
+    fecha_act: "",
+    fecha_alta: "",
+    fecha_asig_plast: "",
+    fecha_nac: "",
+    id_cliente: 0,
+    nombre: "",
+    nombre_fiscal: "",
+    num_plastico: "",
+    plastico_activo: false,
+    regimenFiscal: "",
+    rfc: "",
+    suc_asig_plast: 0,
+    sucursal_origen: 0,
+    suspendido: false,
+    telefono: "",
+    usr_asig_plast: "",
+  });
+  useEffect(() => {
+    if (Number(datosParametros.idClienteSeparada) > 0) {
+      const clienteFiltrado = dataClientes.find(
+        (cliente) => cliente.id_cliente == Number(datosParametros.idClienteSeparada)
+      );
+      console.log(clienteFiltrado);
+
+      setClienteSeleccionado(clienteFiltrado);
+    }
+  }, [dataClientes, datosParametros.idClienteSeparada]);
 
   const putCitaEstado = () => {
     const temporal = new Date(datosParametros.fecha);
@@ -295,7 +334,7 @@ function CitaScreen() {
               precio: params.row.precio,
               d_servicio: params.row.descripcion,
             });
-            setModalProductoSelect(false);
+            setModalProductoSelectEdit(false);
           }}
         >
           Agregar
@@ -561,9 +600,36 @@ function CitaScreen() {
     cveCliente: Number(datosParametros.idClienteSeparada),
   });
 
+  const sp_detalleVentasUpdTiempo = () => {
+    jezaApi
+      .put(
+        `/sp_detalleVentasUpdTiempo?id=${datosParametros.idCita}&tiempo=${datosParametros.tiempoSeparada}`
+      )
+      .then(() => setSuccessInfo(true));
+  };
+  const [stateHandleCitaProceso, setSetstateHandleCitaProceso] = useState(false);
+  useEffect(() => {
+    if (datosParametros.idCita == 4) {
+      setSetstateHandleCitaProceso(true);
+    }
+  }, []);
+
+  const handleCitaProceso = () => {
+    if (stateHandleCitaProceso == false) {
+      setDataEvent({ ...dataEvent, idEstatus: 4 });
+      // putCitaEstado();
+      setTimeout(() => {
+        setEditEstatusInfo(true);
+      }, 1000);
+    }
+  };
   return (
     <>
       <div style={{ right: 10, top: 10, position: "absolute" }}>
+        <FormControlLabel
+          control={<Checkbox value={stateHandleCitaProceso} onClick={() => handleCitaProceso()} />}
+          label="Cita en proceso"
+        />
         <Select
           value={dataEvent.idEstatus}
           name="idEstatus"
@@ -581,7 +647,6 @@ function CitaScreen() {
         <Button
           style={{ marginLeft: 5 }}
           variant="contained"
-          disabled={datosParametros.flag === 1 ? true : false}
           onClick={() => setModalHistorialCliente(true)}
         >
           Historial
@@ -634,13 +699,14 @@ function CitaScreen() {
             <br />
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
               <h3>Agregar servicios</h3>
-              <AddCircleIcon
-                fontSize="large"
-                color="success"
+              <IconButton
                 onClick={() => {
                   setModalProductoSelect(true);
                 }}
-              />
+                disabled={datosParametros.flag === 1 ? true : false}
+              >
+                <AddCircleIcon fontSize="large" color="success" />
+              </IconButton>
             </div>
             <TextField
               variant="filled"
@@ -720,11 +786,14 @@ function CitaScreen() {
                               </Typography>
                             </Grid>
                             <Grid item>
-                              <DeleteIcon
+                              <IconButton
                                 onClick={() => confirmationDelete(servicio.id)}
-                                style={{ marginLeft: "auto" }}
-                              />
-                              <EditIcon
+                                disabled={datosParametros.flag === 1 ? true : false}
+                              >
+                                <DeleteIcon style={{ marginLeft: "auto", color: "black" }} />
+                              </IconButton>
+                              <IconButton
+                                disabled={datosParametros.flag === 1 ? true : false}
                                 onClick={() => {
                                   setFormServicio({
                                     cantidad: servicio.cantidad,
@@ -739,7 +808,9 @@ function CitaScreen() {
                                   setModalServicioEdit(true);
                                   console.log(servicio);
                                 }}
-                              />
+                              >
+                                <EditIcon style={{ color: "black" }} />
+                              </IconButton>
                             </Grid>
                           </Grid>
                         </CardContent>
@@ -751,6 +822,29 @@ function CitaScreen() {
             ) : (
               <p>No hay servicios en proceso</p>
             )}
+            {dataEvent.idEstatus == 4 && datosParametros.estatus == 4 ? (
+              <>
+                <h3>Cambio de tiempos</h3>
+                <TextField
+                  label="Tiempo"
+                  name="tiempoSeparada"
+                  type="number"
+                  value={datosParametros.tiempoSeparada}
+                  onChange={(valor) =>
+                    setDatosParametros({
+                      ...datosParametros,
+                      tiempoSeparada: Number(valor.target.value),
+                    })
+                  }
+                  fullWidth
+                  size="small"
+                  sx={{ marginBottom: "16px" }}
+                ></TextField>
+                <Button variant="contained" onClick={() => sp_detalleVentasUpdTiempo()}>
+                  Guardar
+                </Button>
+              </>
+            ) : null}
           </Grid>
         </Grid>
         <hr />
@@ -1132,7 +1226,38 @@ function CitaScreen() {
             overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
           }}
         >
+          <hr />
+          <h2>Datos del cliente</h2>
+
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <p>Nombre: {clienteSeleccionado?.nombre}</p>
+              <p>
+                Telefono:{" "}
+                {clienteSeleccionado?.telefono
+                  ? clienteSeleccionado?.telefono
+                  : "Actualice la información"}
+              </p>
+              <p>Instagram: Actualice la información</p>
+            </Grid>
+            <Grid item xs={6}>
+              <p>
+                Fecha de nacimiento:{" "}
+                {clienteSeleccionado?.fecha_nac
+                  ? clienteSeleccionado?.fecha_nac
+                  : "Actualice la información"}
+              </p>
+              <p>
+                Correo:{" "}
+                {clienteSeleccionado?.correo_factura
+                  ? clienteSeleccionado?.correo_factura
+                  : "Actualice la información"}
+              </p>
+            </Grid>
+          </Grid>
+          <hr />
           <h2> Historial de citas </h2>
+
           <DataGrid
             rows={historialClientes}
             columns={columnHistorialClientes}
@@ -1269,7 +1394,7 @@ function CitaScreen() {
           <div style={{ position: "fixed", top: 25, right: 25 }}>
             <CloseIcon
               onClick={() => {
-                setModalProductoSelect(false);
+                setModalProductoSelectEdit(false);
               }}
             ></CloseIcon>
           </div>

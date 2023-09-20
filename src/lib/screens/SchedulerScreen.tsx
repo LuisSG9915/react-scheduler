@@ -185,7 +185,6 @@ function SchedulerScreen() {
   const { dataClientes, fetchClientes } = useClientes();
   useEffect(() => {
     fetchClientes();
-
   }, []);
 
   const clientesFormatted = (data, idCliente) => {
@@ -196,7 +195,7 @@ function SchedulerScreen() {
         console.log(objetoEncontrado);
         return [objetoEncontrado.telefono];
       } else {
-        return "a";
+        return "";
       }
     };
     const idProductosEncontrados = buscarIdProducto();

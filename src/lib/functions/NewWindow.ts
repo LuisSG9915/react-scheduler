@@ -1,5 +1,7 @@
-export const handleOpenVentas = () => {
-  const url = `http://cbinfo.no-ip.info:9088/Ventas`; // Reemplaza esto con la URL que desees abrir
+export const handleOpenVentas = (idCliente: number, nombreCliente: string) => {
+  const url = `http://cbinfo.no-ip.info:9088/Ventas?idCliente=${
+    idCliente ? idCliente : 0
+  }&nombreCliente=${nombreCliente ? nombreCliente : "a"}`; // Reemplaza esto con la URL que desees abrir
   const width = 500;
   const height = 1500;
   const left = (window.screen.width - width) / 2;
