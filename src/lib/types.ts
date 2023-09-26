@@ -61,6 +61,10 @@ interface CalendarEvent {
   deletable?: boolean;
   draggable?: boolean;
   allDay?: boolean;
+  tiempo?: any;
+  admin_id?: any;
+  idUsuario?: any;
+  idEstatus?: any;
 }
 export interface Translations {
   navigation: Record<View, string> & { today: string };

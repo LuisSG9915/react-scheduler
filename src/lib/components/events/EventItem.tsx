@@ -1,7 +1,7 @@
 import { Fragment, MouseEvent, useMemo, useState } from "react";
-import { Popover, Typography, ButtonBase, useTheme, IconButton } from "@mui/material";
+import { Popover, Typography, ButtonBase, useTheme, IconButton, Button } from "@mui/material";
 import { format } from "date-fns";
-import { ProcessedEvent } from "../../types";
+import { ProcessedEvent, SchedulerHelpers } from "../../types";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import ArrowLeftRoundedIcon from "@mui/icons-material/ArrowLeftRounded";
 import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
@@ -13,10 +13,14 @@ import { differenceInDaysOmitTime } from "../../helpers/generals";
 import useStore from "../../hooks/useStore";
 import useDragAttributes from "../../hooks/useDragAttributes";
 import axios from "axios";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { handleOpenVentas } from "../../functions/NewWindow";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useClientes } from "../../hooks/useClientes";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { putCitaEstado } from "../../functions/Citas";
+import { useEstatusCitas } from "../../hooks/useEstatusCitas";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 interface EventItemProps {
   event: ProcessedEvent;
   multiday: boolean;
@@ -48,6 +52,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     view,
     draggable,
     translations,
+    customEditor,
   } = useStore();
   const dragProps = useDragAttributes(event);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
@@ -94,11 +99,30 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
       triggerLoading(false);
     }
   };
-  const { dataClientes } = useClientes();
-  const getCiaForeignKey = (idTableCia: number) => {
-    const cia = dataClientes.find((cia: any) => cia.id === idTableCia);
-    return cia ? cia.nombre : "Sin Compania";
+  const { estatusCitas } = useEstatusCitas();
+
+  const [anchorEls, setAnchorEls] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEls);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEls(event.currentTarget);
+    console.log("A");
   };
+  const idSuc = new URLSearchParams(window.location.search).get("idSuc");
+
+  const handleClose = (number: number) => {
+    setAnchorEls(null);
+    putCitaEstado(
+      event.event_id,
+      format(event.start, "yyyy-MM-dd HH:mm"),
+      event.idCliente,
+      event.tiempo,
+      event.admin_id,
+      event.idUsuario,
+      number,
+      idSuc
+    ).then(() => window.location.reload());
+  };
+
   const renderViewer = () => {
     const idKey = resourceFields.idField;
     const hasResource = resources.filter((res) =>
@@ -136,7 +160,30 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
                 deletable={deletable}
                 editable={editable}
               />
-
+              <IconButton
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <ChecklistIcon></ChecklistIcon>
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEls}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {estatusCitas.map((estado) => (
+                  <MenuItem key={estado.id} onClick={() => handleClose(estado.id)}>
+                    {estado.descripcionEstatus}
+                  </MenuItem>
+                ))}
+              </Menu>
               <IconButton
                 onClick={() => {
                   console.log(event);

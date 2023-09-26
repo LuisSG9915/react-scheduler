@@ -112,15 +112,11 @@ function CreateCitaScreen() {
   //     return response;
   //   }
   // };
+
   const postCita = async () => {
     const fechaTemporal = new Date(datosParametros.fecha);
-    let formattedDate = format(fechaTemporal, "yyyy-MM-dd HH:mm");
-    let nuevaFormattedDate; // Declarar fuera del bloque if
+    const formattedDate = format(fechaTemporal, "yyyy-MM-dd HH:mm");
 
-    if (temp2 > 0) {
-      fechaTemporal.setMinutes(new Date(datosParametros.fecha).getMinutes() + 120);
-      formattedDate = format(fechaTemporal, "yyyy-MM-dd HH:mm");
-    }
     if (!dataEvent.idCliente) {
       setVoidInfo(true);
     } else {
@@ -134,7 +130,15 @@ function CreateCitaScreen() {
         );
 
         setFormServicio({ ...formServicio, id_Cita: Number(response.data[0].mensaje2) });
-        setTemp2(1);
+
+        setDatosParametros({
+          ...datosParametros,
+          fecha: new Date(
+            datosParametros.fecha.setMinutes(
+              datosParametros.fecha.getMinutes() + formServicio.tiempo * formServicio.cantidad
+            )
+          ),
+        });
         setTimeout(() => {
           setModalServiciosAgregar(true);
         }, 1111);
@@ -585,8 +589,6 @@ function CreateCitaScreen() {
           </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <h3>Agregar servicios</h3>
-            <h5>{formServicio.id_Cita} -</h5>
-            <h5>{formServicio.tiempo} -</h5>
             <AddCircleIcon
               fontSize="large"
               color="success"

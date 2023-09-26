@@ -21,15 +21,16 @@ export const putCitaEstado = async (
   tiempo: any,
   admin_id: any,
   idUsuario: any,
-  idEstatus: any
+  idEstatus: any,
+  sucursal: any
 ) => {
-  await axios
-    .put(
-      `http://cbinfo.no-ip.info:9089/Cita?id=${event_id}&cia=26&sucursal=21&fechaCita=${fechaCita}&idCliente=${idCliente}&tiempo=${tiempo}&idEstilista=${admin_id}&idUsuario=${idUsuario}&estatus=${idEstatus}`
-    )
-    .then((response) => {
-      alert("Acción realizada");
-    });
+  if (idEstatus > 0) {
+    await axios.put(
+      `http://cbinfo.no-ip.info:9089/Cita?id=${
+        idEstatus === 4 ? 0 : event_id
+      }&cia=26&sucursal=${sucursal}&fechaCita=${fechaCita}&idCliente=${idCliente}&tiempo=${tiempo}&idEstilista=${admin_id}&idUsuario=${idUsuario}&estatus=${idEstatus}`
+    );
+  }
 };
 
 export const deleteCita = (id: number) => {

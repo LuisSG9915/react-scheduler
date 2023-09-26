@@ -30,4 +30,5 @@ export interface Eventos {
   idcolor?: number;
   idEstatus?: number;
   idRec?: number;
+  
 }

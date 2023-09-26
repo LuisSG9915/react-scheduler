@@ -219,6 +219,9 @@ function SchedulerScreen() {
 
           const formattedData = (await response).data.map((evento: Eventos) => ({
             ...evento,
+            tiempo: evento.tiempo,
+            idUsuario: evento.idUsuario,
+
             start: evento.fechaCita ? new Date(evento.fechaCita) : new Date(),
             end: evento.horaFin ? new Date(evento.horaFin) : new Date(),
             admin_id: evento.idEstilista ? evento.idEstilista : 3,
