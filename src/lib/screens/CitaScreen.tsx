@@ -43,6 +43,7 @@ import { useEstatusCitas } from "../hooks/useEstatusCitas";
 import { useHistorialClientes } from "../hooks/useHistorialClientes";
 import ManageSearchTwoToneIcon from "@mui/icons-material/ManageSearchTwoTone";
 import { useClientesWithUseEffect } from "../hooks/useClientesWithUseEffect";
+import TableHistorial from "../components/SchedulerModificado/TableHistorial";
 function CitaScreen() {
   const [modalCliente, setmodalCliente] = useState(false);
   const [datosParametros, setDatosParametros] = useState({
@@ -600,12 +601,30 @@ function CitaScreen() {
     cveCliente: Number(datosParametros.idClienteSeparada),
   });
 
-  const sp_detalleVentasUpdTiempo = () => {
+  const putCita = () => {
     jezaApi
       .put(
-        `/sp_detalleVentasUpdTiempo?id=${datosParametros.idCita}&tiempo=${datosParametros.tiempoSeparada}`
+        `/Cita?id=${datosParametros.idCita}&cia=${26}&sucursal=${datosParametros.idSuc}&fechaCita=${
+          datosParametros.fecha
+        }&idCliente=${datosParametros.idCliente}&tiempo=${
+          datosParametros.tiempoSeparada
+        }&idEstilista=${datosParametros.idEstilista}&idUsuario=${datosParametros.idUser}&estatus=${
+          datosParametros.estatus
+        }`
       )
-      .then(() => setSuccessInfo(true));
+      .then(() => alert("PUT CITA EXITOSA"));
+  };
+
+  const sp_detalleVentasUpdTiempo = () => {
+    if (datosParametros.estatus === 4) {
+      jezaApi
+        .put(
+          `/sp_detalleVentasUpdTiempo?id=${datosParametros.idCita}&tiempo=${datosParametros.tiempoSeparada}`
+        )
+        .then(() => setSuccessInfo(true));
+    } else {
+      putCita();
+    }
   };
   const [stateHandleCitaProceso, setSetstateHandleCitaProceso] = useState(false);
   useEffect(() => {
@@ -622,6 +641,30 @@ function CitaScreen() {
         setEditEstatusInfo(true);
       }, 1000);
     }
+  };
+  const [datah, setData] = useState<any[]>([]); // Definir el estado datah
+  const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
+
+  const historial = (dato: any) => {
+    jezaApi.get(`/Historial?cliente=${datosParametros.idClienteSeparada}`).then((response) => {
+      setData(response.data);
+      // toggleModalHistorial(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+    historialCitaFutura(datosParametros.idClienteSeparada);
+  };
+
+  const historialCitaFutura = (dato: any) => {
+    jezaApi
+      .get(`/sp_detalleCitasFuturasSel?Cliente=${datosParametros.idClienteSeparada}`)
+      .then((response) => {
+        const dataConFechasFormateadas = response.data.map((item: any) => ({
+          ...item,
+          fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+          fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+        }));
+        setData1(dataConFechasFormateadas);
+        // toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+      });
   };
   return (
     <>
@@ -822,29 +865,27 @@ function CitaScreen() {
             ) : (
               <p>No hay servicios en proceso</p>
             )}
-            {dataEvent.idEstatus == 4 && datosParametros.estatus == 4 ? (
-              <>
-                <h3>Cambio de tiempos</h3>
-                <TextField
-                  label="Tiempo"
-                  name="tiempoSeparada"
-                  type="number"
-                  value={datosParametros.tiempoSeparada}
-                  onChange={(valor) =>
-                    setDatosParametros({
-                      ...datosParametros,
-                      tiempoSeparada: Number(valor.target.value),
-                    })
-                  }
-                  fullWidth
-                  size="small"
-                  sx={{ marginBottom: "16px" }}
-                ></TextField>
-                <Button variant="contained" onClick={() => sp_detalleVentasUpdTiempo()}>
-                  Guardar
-                </Button>
-              </>
-            ) : null}
+            <>
+              <h3>Cambio de tiempos</h3>
+              <TextField
+                label="Tiempo"
+                name="tiempoSeparada"
+                type="number"
+                value={datosParametros.tiempoSeparada}
+                onChange={(valor) =>
+                  setDatosParametros({
+                    ...datosParametros,
+                    tiempoSeparada: Number(valor.target.value),
+                  })
+                }
+                fullWidth
+                size="small"
+                sx={{ marginBottom: "16px" }}
+              ></TextField>
+              <Button variant="contained" onClick={() => sp_detalleVentasUpdTiempo()}>
+                Guardar
+              </Button>
+            </>
           </Grid>
         </Grid>
         <hr />
@@ -1257,7 +1298,12 @@ function CitaScreen() {
           </Grid>
           <hr />
           <h2> Historial de citas </h2>
-
+          <TableHistorial
+            datah={datah}
+            loadHistorialDetalle={loadHistorialDetalle}
+            setIsModalOpen={setIsModalOpen}
+            setParamsDetalles={setParamsDetalles}
+          ></TableHistorial>
           <DataGrid
             rows={historialClientes}
             columns={columnHistorialClientes}
