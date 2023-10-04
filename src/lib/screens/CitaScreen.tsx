@@ -59,6 +59,7 @@ function CitaScreen() {
     idSuc: 0,
     flag: 0,
     estatus: 0,
+    idCitaServicio: 0,
   });
   useEffect(() => {
     const idCita = new URLSearchParams(window.location.search).get("idCita");
@@ -71,6 +72,7 @@ function CitaScreen() {
     const tiempoSeparada = cadenaClienteTiempo[1];
     const estilistaSeparada = cadenaClienteTiempo[2];
     const estatus = cadenaClienteTiempo[3];
+    const idCitaServicio = cadenaClienteTiempo[4];
     const idRec = new URLSearchParams(window.location.search).get("idRec");
     const flag = new URLSearchParams(window.location.search).get("flag");
 
@@ -91,6 +93,7 @@ function CitaScreen() {
       idRec: Number(idRec),
       flag: Number(flag),
       estatus: Number(estatus),
+      idCitaServicio: Number(idCitaServicio),
     });
     setDataEvent({ ...dataEvent, idEstatus: Number(estatus) });
   }, []);
@@ -151,21 +154,6 @@ function CitaScreen() {
   const { dataClientes } = useClientesWithUseEffect();
 
   const [modalCitaEdit, setModalCitaEdit] = useState(false);
-  const handleChangeSelect = (event: SelectChangeEvent<number>) => {
-    const selectedValue = event.target.value;
-    const selectedName = event.target.name;
-    setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: Number(selectedValue) }));
-  };
-  const handleChangeEstatusCita = (event: SelectChangeEvent<number>) => {
-    const selectedValue = event.target.value;
-    const selectedName = event.target.name;
-    setDataEvent((prevState: any) => ({ ...prevState, [selectedName]: Number(selectedValue) }));
-    setFlagCita(true);
-    setTimeout(() => {
-      setEditEstatusInfo(true);
-    }, 1500);
-    // AQUI ABRO EL MODAL
-  };
   const [datasEstilista, setDatasEstilista] = useState<EstilistaResponse[]>([]);
   const [modalEstilista, setModalEstilista] = useState(false);
 
@@ -224,7 +212,6 @@ function CitaScreen() {
       .then((response) => {
         setModalCitaEdit(false);
         setEditEstatusInfo(false);
-        // if (flagCita === false)
         setTimeout(() => {
           setSuccessInfo(true);
         }, 1000);
@@ -232,7 +219,7 @@ function CitaScreen() {
       });
   };
 
-  const [datasServicios, setDatasServicios] = useState<[]>([]);
+  const [datasServicios, setDatasServicios] = useState<any[]>([]);
 
   const deleteServicio = (id: number) => {
     if (datasServicios.length <= 1) {
@@ -248,20 +235,21 @@ function CitaScreen() {
     // setTimeout(() => {
     getCitaServicios(Number(datosParametros.idCita));
     // }, 1000);
-  }, [datosParametros.idCita]);
+  }, [datosParametros.idCita, datosParametros.idCitaServicio]);
 
   const getCitaServicios = async (id: number) => {
     const fechaTemporal = new Date(datosParametros.fecha);
     const formattedDate = format(fechaTemporal, "yyyyMMdd");
-    if (Number(datosParametros.idCita) > 1) {
+    if (Number(datosParametros.idCita) > 1 && datosParametros.idCitaServicio > 0) {
       try {
         const response = await axios.get(
-          `http://cbinfo.no-ip.info:9089/Citaservicio?id=${Number(
-            datosParametros.idCita
-          )}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
+          `http://cbinfo.no-ip.info:9089/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
         );
-        setDatasServicios(response.data);
-        console.log(response.data);
+        const temp = response.data;
+        const formattedTempCita = [
+          response.data.find((item) => item.id === datosParametros.idCitaServicio),
+        ];
+        setDatasServicios(formattedTempCita);
       } catch (error) {
         console.error(error);
       }
@@ -432,28 +420,6 @@ function CitaScreen() {
     { field: "Precio", headerName: "Precio", resizable: true },
     { field: "Descuento", headerName: "Descuento", resizable: true },
     { field: "Forma_pago", headerName: "Forma pago", resizable: true, minWidth: 50 },
-    // {
-    //   field: "action",
-    //   headerName: "Acciones",
-    //   width: 200,
-    //   // renderCell: (params) => <span>{params.row.precio}</span>,
-    //   renderCell: (params) => (
-    //     <Button
-    //       variant={"contained"}
-    //       onClick={() => {
-    //         setFormServicio({
-    //           ...formServicio,
-    //           idServicio: params.row.id,
-    //           precio: params.row.precio,
-    //           d_servicio: params.row.descripcion,
-    //         });
-    //         setModalProductoSelect(false);
-    //       }}
-    //     >
-    //       Agregar
-    //     </Button>
-    //   ),
-    // },
   ];
   const columnClientes: GridColDef[] = [
     { field: "descripcion", headerName: "Descripcion", width: 200 },
@@ -602,17 +568,30 @@ function CitaScreen() {
   });
 
   const putCita = () => {
+    const fechaHora = decodeURIComponent(datosParametros.fecha.toString());
+    const fecha = new Date(fechaHora);
+
+    // Obtener los componentes de fecha y hora
+    const año = fecha.getFullYear();
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // El mes se indexa desde 0
+    const dia = fecha.getDate().toString().padStart(2, "0");
+    const horas = fecha.getHours().toString().padStart(2, "0");
+    const minutos = fecha.getMinutes().toString().padStart(2, "0");
+
+    // Formatear la fecha y la hora en el formato deseado
+    const fechaHoraFormateada = `${año}/${mes}/${dia} ${horas}:${minutos}`;
+    const newFecha = fechaHoraFormateada;
     jezaApi
       .put(
-        `/Cita?id=${datosParametros.idCita}&cia=${26}&sucursal=${datosParametros.idSuc}&fechaCita=${
-          datosParametros.fecha
-        }&idCliente=${datosParametros.idCliente}&tiempo=${
+        `/Cita?id=${datosParametros.idCita}&cia=${26}&sucursal=${
+          datosParametros.idSuc
+        }&fechaCita=${newFecha}&idCliente=${datosParametros.idClienteSeparada}&tiempo=${
           datosParametros.tiempoSeparada
         }&idEstilista=${datosParametros.idEstilista}&idUsuario=${datosParametros.idUser}&estatus=${
           datosParametros.estatus
         }`
       )
-      .then(() => alert("PUT CITA EXITOSA"));
+      .then(() => alert(`PUT CITA EXITOSA ${newFecha}`));
   };
 
   const sp_detalleVentasUpdTiempo = () => {
@@ -666,10 +645,11 @@ function CitaScreen() {
         // toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
       });
   };
+
   return (
     <>
       <div style={{ right: 10, top: 10, position: "absolute" }}>
-        <FormControlLabel
+        {/* <FormControlLabel
           control={<Checkbox value={stateHandleCitaProceso} onClick={() => handleCitaProceso()} />}
           label="Cita en proceso"
         />
@@ -686,7 +666,7 @@ function CitaScreen() {
               {status.descripcionEstatus}
             </MenuItem>
           ))}
-        </Select>
+        </Select> */}
         <Button
           style={{ marginLeft: 5 }}
           variant="contained"
@@ -737,72 +717,11 @@ function CitaScreen() {
       />
       <div style={{ marginRight: 25, marginLeft: 25 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={7} md={7}>
-            <br />
-            <br />
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <h3>Agregar servicios</h3>
-              <IconButton
-                onClick={() => {
-                  setModalProductoSelect(true);
-                }}
-                disabled={datosParametros.flag === 1 ? true : false}
-              >
-                <AddCircleIcon fontSize="large" color="success" />
-              </IconButton>
-            </div>
-            <TextField
-              variant="filled"
-              label={"Agrega el servicio"}
-              fullWidth
-              disabled
-              size="small"
-              value={formServicio.d_servicio}
-              sx={{ marginBottom: "16px" }}
-            ></TextField>
-            <br />
-            <br />
-            <TextField
-              label="Cantidad"
-              name="cantidad"
-              type="number"
-              value={formServicio.cantidad}
-              onChange={handleChangeServicios}
-              disabled={datosParametros.flag === 1 ? true : false}
-              fullWidth
-              size="small"
-              sx={{ marginBottom: "16px" }}
-            />
-            <br />
-            <br />
-            <TextField
-              label="Observaciones"
-              name="observaciones"
-              value={formServicio.observaciones}
-              onChange={handleChangeServicios}
-              disabled={datosParametros.flag === 1 ? true : false}
-              fullWidth
-              size="small"
-              sx={{ marginBottom: "16px" }}
-            />
-            <Button
-              variant="contained"
-              disabled={datosParametros.flag === 1 ? true : false}
-              onClick={() => {
-                postServicio();
-              }}
-            >
-              Guardar servicio
-              <SaveTwoToneIcon style={{ marginLeft: 10 }}></SaveTwoToneIcon>
-            </Button>
-            <br />
-            <br />
-          </Grid>
           <Grid item xs={12} sm={5} md={5}>
             <br />
             <br />
             {/* SEPARACIÓN  */}
-            <h3> Servicios enlistados </h3>
+            <h3> Servicio </h3>
             {/* ESCOJER SERVICIO */}
             {datasServicios.length > 0 ? (
               datasServicios.map((servicio: Servicio, index: number) => (
@@ -833,7 +752,12 @@ function CitaScreen() {
                                 onClick={() => confirmationDelete(servicio.id)}
                                 disabled={datosParametros.flag === 1 ? true : false}
                               >
-                                <DeleteIcon style={{ marginLeft: "auto", color: "black" }} />
+                                <DeleteIcon
+                                  style={{
+                                    marginLeft: "auto",
+                                    color: datosParametros.flag === 1 ? "grey" : "black",
+                                  }}
+                                />
                               </IconButton>
                               <IconButton
                                 disabled={datosParametros.flag === 1 ? true : false}
@@ -852,7 +776,9 @@ function CitaScreen() {
                                   console.log(servicio);
                                 }}
                               >
-                                <EditIcon style={{ color: "black" }} />
+                                <EditIcon
+                                  style={{ color: datosParametros.flag === 1 ? "grey" : "black" }}
+                                />
                               </IconButton>
                             </Grid>
                           </Grid>
@@ -882,7 +808,13 @@ function CitaScreen() {
                 size="small"
                 sx={{ marginBottom: "16px" }}
               ></TextField>
-              <Button variant="contained" onClick={() => sp_detalleVentasUpdTiempo()}>
+              <Button
+                variant="contained"
+                onClick={() => sp_detalleVentasUpdTiempo()}
+                disabled={
+                  datosParametros.flag === 1 && datosParametros.estatus !== 4 ? true : false
+                }
+              >
                 Guardar
               </Button>
             </>

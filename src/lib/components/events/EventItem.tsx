@@ -184,17 +184,18 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
                   </MenuItem>
                 ))}
               </Menu>
-              <IconButton
-                onClick={() => {
-                  console.log(event);
-                  handleOpenVentas(
-                    event?.idCliente ? Number(event?.idCliente) : 0,
-                    event?.nombreCliente
-                  );
-                }}
-              >
-                <ShoppingCartIcon></ShoppingCartIcon>
-              </IconButton>
+              {event?.idEstatus === 4 ? (
+                <IconButton
+                  onClick={() => {
+                    handleOpenVentas(
+                      event?.idCliente ? Number(event?.idCliente) : 0,
+                      event?.nombreCliente
+                    );
+                  }}
+                >
+                  <ShoppingCartIcon></ShoppingCartIcon>
+                </IconButton>
+              ) : null}
             </div>
           </div>
           {/* COMPONENTE CARD ON PRESS */}
@@ -284,7 +285,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     let item = (
       <div style={{ padding: "2px 6px" }}>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
-          {`${event.description}`}
+          {`${event.description} ${event.idEstatus !== 4 ? "" : event.ServicioDescripción} `}
         </Typography>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
           {`${event.numeroTelefono}`}

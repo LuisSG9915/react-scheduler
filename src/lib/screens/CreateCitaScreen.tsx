@@ -201,7 +201,7 @@ function CreateCitaScreen() {
     const fechaFormateada = format(temporal, "yyyyMMdd");
     try {
       const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
+        `http://cbinfo.no-ip.info:9089//CitaServicio?idcliente=${dataEvent.idCliente}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
       );
       setDatasServicios(response.data);
       console.log(response.data);
@@ -278,43 +278,12 @@ function CreateCitaScreen() {
     },
   ];
 
-  // const postServicio = async () => {
-  //   const temp = postCita().then((response) => {
-  //     return response;
-  //   });
-  //   console.log(temp);
-  //   if (formServicio.cantidad !== 0 && formServicio.idServicio > 0) {
-  //     await jezaApi
-  //       .post(
-  //         `/CitaServicio?id_Cita=${formServicio.id_Cita}&idServicio=${
-  //           formServicio.idServicio
-  //         }&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${
-  //           formServicio.observaciones ? formServicio.observaciones : "."
-  //         }&usuario=${datosParametros.idUser}`
-  //       )
-  //       .then((response) => {
-  //         setSuccessInfo(true);
-  //         getCitaServicios(formServicio.id_Cita);
-  //         setFormServicio({
-  //           ...formServicio,
-  //           d_servicio: "",
-  //           cantidad: 1,
-  //           observaciones: "",
-  //           idServicio: 0,
-  //           id_Cita: 0,
-  //         });
-  //       });
-  //   } else {
-  //     setVoidInfo(true);
-  //   }
-  // };
+  const [textSuccessInfo, setTextSuccessInfo] = useState("Registro guardado correctamente");
   const [temp2, setTemp2] = useState(0);
   const postServicio = async () => {
     try {
       const response = await postCita();
       const temp = response[0].mensaje2;
-      console.log(temp);
-
       if (formServicio.cantidad !== 0 && formServicio.idServicio > 0) {
         await jezaApi
           .post(
@@ -325,7 +294,10 @@ function CreateCitaScreen() {
             }&usuario=${datosParametros.idUser}`
           )
           .then(() => {
-            setSuccessInfo(true);
+            setTextSuccessInfo("Se agendó la cita correctamente...");
+            setTimeout(() => {
+              setSuccessInfo(true);
+            }, 1000);
             getCitaServicios(formServicio.id_Cita);
             setFormServicio({
               ...formServicio,
@@ -434,7 +406,7 @@ function CreateCitaScreen() {
         openModal={successInfo}
         onClose={() => setSuccessInfo(false)}
         textTitle={"Ok"}
-        contentText={"Registro guardado correctamente"}
+        contentText={textSuccessInfo}
         salir={successInfoFunction}
       />
       <DialogComponent

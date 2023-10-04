@@ -32,7 +32,7 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
     () => [
       {
         header: "Acciones",
-        Cell: ({ row }) => {
+        Cell: ({ row }: any) => {
           let icono;
           let isDisabled = false; // Por defecto, el botón no está deshabilitado
 
@@ -125,9 +125,9 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         header: "Fecha",
         flex: 1,
         size: 1,
-        Cell: ({ cell }) => {
-          // const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
-          const fecha = new Date();
+        Cell: ({ cell }: any) => {
+          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
+          // const fecha = new Date();
           const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
           const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
           const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
@@ -180,11 +180,11 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => (
+        Cell: ({ cell }: any) => (
           <span>
             $
             {cell
-              .getValue<number>()
+              .getValue()
               .toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         ),
@@ -236,7 +236,7 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
   // Configuración de las opciones de exportación CSV
   const csvOptions = {
     fieldSeparator: ",",
-    quoteStrings: '"',
+    // quoteStrings: '""',
     decimalSeparator: ".",
     showLabels: true,
     useBom: true,

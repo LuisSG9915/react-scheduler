@@ -30,5 +30,6 @@ export interface Eventos {
   idcolor?: number;
   idEstatus?: number;
   idRec?: number;
-  
+  ServicioDescripción?: string;
+  idCitaServicio?: any;
 }
