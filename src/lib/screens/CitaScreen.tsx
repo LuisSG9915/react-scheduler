@@ -31,8 +31,6 @@ import HistoryTwoToneIcon from "@mui/icons-material/HistoryTwoTone";
 import { ServicioPost, Servicio } from "../models/Servicio";
 import { EstilistaResponse } from "../models/Estilista";
 import EditIcon from "@mui/icons-material/Edit";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { jezaApi } from "../api/jezaApi";
 import { useProductosFiltradoExistenciaProducto } from "../hooks/useProductosFiltradoExistenciaProducto";
@@ -225,14 +223,18 @@ function CitaScreen() {
   const [datasServicios, setDatasServicios] = useState<any[]>([]);
 
   const deleteServicio = (id: number) => {
-    if (datasServicios.length <= 1) {
-      alert("No puede quedase una cita sin servicios");
-    } else {
-      jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
-        getCitaServicios(Number(datosParametros.idCita));
-        setDeleteInfo(false);
-      });
-    }
+    jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
+      getCitaServicios(Number(datosParametros.idCita));
+      setDeleteInfo(false);
+    });
+    // if (datasServicios.length <= 1) {
+    //   alert("No puede quedase una cita sin servicios");
+    // } else {
+    //   jezaApi.delete(`/CitaServicio?idServicio=${id}`).then(() => {
+    //     getCitaServicios(Number(datosParametros.idCita));
+    //     setDeleteInfo(false);
+    //   });
+    // }
   };
   useEffect(() => {
     // setTimeout(() => {
@@ -522,6 +524,7 @@ function CitaScreen() {
   }
   const [voidInfo, setVoidInfo] = useState(false);
   const [successInfo, setSuccessInfo] = useState(false);
+  const [successInfoCita, setSuccessInfoCita] = useState(false);
   const [deleteInfo, setDeleteInfo] = useState(false);
   const [editEstatusInfo, setEditEstatusInfo] = useState(false);
   const DialogComponent = ({
@@ -562,6 +565,9 @@ function CitaScreen() {
   const successInfoFunction = () => {
     setSuccessInfo(false);
   };
+  const successInfoFunctionCita = () => {
+    setSuccessInfoCita(false);
+  };
   const deleteInfoFunction = () => {
     setDeleteInfo(false);
   };
@@ -600,7 +606,9 @@ function CitaScreen() {
           datosParametros.estatus
         }`
       )
-      .then(() => alert(`PUT CITA EXITOSA ${newFecha}`));
+      .then(() => {
+        setSuccessInfoCita(true);
+      });
   };
 
   const sp_detalleVentasUpdTiempo = () => {
@@ -700,6 +708,13 @@ function CitaScreen() {
         textTitle={"Ok"}
         contentText={"Información guardada correctamente"}
         salir={successInfoFunction}
+      />
+      <DialogComponent
+        openModal={successInfoCita}
+        onClose={() => setSuccessInfoCita(false)}
+        textTitle={"Ok"}
+        contentText={"Tiempo cambiado exitosamente"}
+        salir={successInfoFunctionCita}
       />
       <DialogComponent
         openModal={voidInfo}
