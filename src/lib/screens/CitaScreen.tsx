@@ -60,6 +60,7 @@ function CitaScreen() {
     flag: 0,
     estatus: 0,
     idCitaServicio: 0,
+    descripcionServicio: "",
   });
   useEffect(() => {
     const idCita = new URLSearchParams(window.location.search).get("idCita");
@@ -73,6 +74,7 @@ function CitaScreen() {
     const estilistaSeparada = cadenaClienteTiempo[2];
     const estatus = cadenaClienteTiempo[3];
     const idCitaServicio = cadenaClienteTiempo[4];
+    const descripcionServicio = cadenaClienteTiempo[5];
     const idRec = new URLSearchParams(window.location.search).get("idRec");
     const flag = new URLSearchParams(window.location.search).get("flag");
 
@@ -94,6 +96,7 @@ function CitaScreen() {
       flag: Number(flag),
       estatus: Number(estatus),
       idCitaServicio: Number(idCitaServicio),
+      descripcionServicio: descripcionServicio,
     });
     setDataEvent({ ...dataEvent, idEstatus: Number(estatus) });
   }, []);
@@ -240,16 +243,22 @@ function CitaScreen() {
   const getCitaServicios = async (id: number) => {
     const fechaTemporal = new Date(datosParametros.fecha);
     const formattedDate = format(fechaTemporal, "yyyyMMdd");
-    if (Number(datosParametros.idCita) > 1 && datosParametros.idCitaServicio > 0) {
+    if (Number(datosParametros.idCita) > 1) {
       try {
         const response = await axios.get(
           `http://cbinfo.no-ip.info:9089/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
         );
-        const temp = response.data;
-        const formattedTempCita = [
-          response.data.find((item) => item.id === datosParametros.idCitaServicio),
-        ];
-        setDatasServicios(formattedTempCita);
+        if (datosParametros.idCitaServicio > 0) {
+          const formattedTempCita = [
+            response.data.find((item) => item.id === datosParametros.idCitaServicio),
+          ];
+          setDatasServicios(formattedTempCita);
+        } else {
+          const formattedTempCitaDesc = [
+            response.data.find((item) => item.descripcion == datosParametros.descripcionServicio),
+          ];
+          setDatasServicios(formattedTempCitaDesc);
+        }
       } catch (error) {
         console.error(error);
       }
