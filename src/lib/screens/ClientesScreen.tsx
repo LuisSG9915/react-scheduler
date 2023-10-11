@@ -30,6 +30,9 @@ function ClientesScreen() {
     claveRegistroMovil: "",
     fecha_alta: "",
     fecha_act: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
 
   const postCliente = () => {
@@ -48,7 +51,13 @@ function ClientesScreen() {
     } else {
       jezaApi
         .post(
-          `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+          `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${
+            form.ciudad
+          }&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${
+            form.telefono
+          }&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${
+            form.redsocial1 ? form.redsocial1 : "."
+          }&redsocial2=${"..."}&redsocial3=${"..."}`
         )
         .then((response) => {
           setForm({
@@ -129,7 +138,7 @@ function ClientesScreen() {
             <Grid item xs={6}>
               <Typography variant="body1">Codigo Postal:</Typography>
               <TextField
-                type="text"
+                type="number"
                 name="cp"
                 onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
                 value={form.cp}
@@ -138,7 +147,7 @@ function ClientesScreen() {
               <Typography variant="body1">Teléfono:</Typography>
               <TextField
                 type="text"
-                name="telefono"
+                name="number"
                 onChange={(e) => setForm({ ...form, telefono: String(e.target.value) })}
                 value={form.telefono}
                 placeholder="Ingrese el Número Telefónico del Cliente"
@@ -157,6 +166,15 @@ function ClientesScreen() {
                 name="fecha_nac"
                 onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
                 value={form.fecha_nac}
+                
+              />
+              <Typography variant="body1">Instagram: </Typography>
+              <TextField
+                type="text"
+                name="redsocial1"
+                onChange={(e) => setForm({ ...form, redsocial1: String(e.target.value) })}
+                value={form.redsocial1}
+                placeholder="Ingrese el instagram"
               />
             </Grid>
           </Grid>

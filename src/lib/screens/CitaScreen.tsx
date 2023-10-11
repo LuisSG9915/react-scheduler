@@ -184,6 +184,9 @@ function CitaScreen() {
     suspendido: false,
     telefono: "",
     usr_asig_plast: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
   useEffect(() => {
     if (Number(datosParametros.idClienteSeparada) > 0) {

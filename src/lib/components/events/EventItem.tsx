@@ -202,9 +202,16 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           {viewerTitleComponent instanceof Function ? (
             viewerTitleComponent(event)
           ) : (
-            <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
-              {event.description}
-            </Typography>
+            <>
+              <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
+                {`${event.description}  `}
+              </Typography>
+              <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
+                {`${event.idEstatus !== 4 ? "" : event.ServicioDescripción}  ${
+                  event.idEstatus !== 1009 ? "" : event.ServicioDescripción
+                } `}
+              </Typography>
+            </>
           )}
         </div>
         {/* COMPONENTE CARD ON PRESS */}
@@ -285,13 +292,14 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     let item = (
       <div style={{ padding: "2px 6px" }}>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
-          {`${event.description} ${event.idEstatus !== 4 ? "" : event.ServicioDescripción}  ${
-            event.idEstatus !== 1009 ? "" : event.ServicioDescripción
-          }  `}
+          {`${event.description} - ${event.numeroTelefono} `}
         </Typography>
         <Typography style={{ fontSize: 11, color: "black" }} noWrap>
-          {`${event.numeroTelefono}`}
+          {` ${event.ServicioDescripción}  `}
         </Typography>
+        {/* <Typography style={{ fontSize: 11, color: "black" }} noWrap>
+          {`${event.numeroTelefono}`}
+        </Typography> */}
 
         {showdate && (
           <Typography style={{ fontSize: 11, color: "black" }} noWrap>

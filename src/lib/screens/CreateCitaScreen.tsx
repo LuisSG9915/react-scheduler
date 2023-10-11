@@ -121,28 +121,38 @@ function CreateCitaScreen() {
       setVoidInfo(true);
     } else {
       try {
-        const response = await axios.post(
-          `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${
-            temp2 > 0 ? formattedDate : formattedDate
-          }&idCliente=${dataEvent.idCliente}&tiempo=0&idEstilista=${
-            datosParametros.idUser
-          }&idUsuario=${datosParametros.idRec}&estatus=1`
-        );
+        if (formServicio.tiempo > 0) {
+          const response = await axios.post(
+            `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${
+              datosParametros.idSuc
+            }&fechaCita=${temp2 > 0 ? formattedDate : formattedDate}&idCliente=${
+              dataEvent.idCliente
+            }&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${
+              datosParametros.idRec
+            }&estatus=1`
+          );
 
-        setFormServicio({ ...formServicio, id_Cita: Number(response.data[0].mensaje2) });
+          setFormServicio({
+            ...formServicio,
+            id_Cita: Number(response.data[0].mensaje2),
+            cantidad: 1,
+          });
 
-        setDatosParametros({
-          ...datosParametros,
-          fecha: new Date(
-            datosParametros.fecha.setMinutes(
-              datosParametros.fecha.getMinutes() + formServicio.tiempo * formServicio.cantidad
-            )
-          ),
-        });
-        setTimeout(() => {
-          setModalServiciosAgregar(true);
-        }, 1111);
-        return response.data;
+          setDatosParametros({
+            ...datosParametros,
+            fecha: new Date(
+              datosParametros.fecha.setMinutes(
+                datosParametros.fecha.getMinutes() + formServicio.tiempo * formServicio.cantidad
+              )
+            ),
+          });
+          return response.data;
+        } else {
+          setFormServicio({ ...formServicio, cantidad: 1 });
+          setTimeout(() => {
+            setModalServiciosAgregar(true);
+          }, 1111);
+        }
       } catch (error) {
         // Manejo de errores aquí
         console.error("Error en postCita:", error);
@@ -154,7 +164,7 @@ function CreateCitaScreen() {
   const [formServicio, setFormServicio] = useState<ServicioPost>({
     id_Cita: 0,
     idServicio: 0,
-    cantidad: 1,
+    cantidad: 0,
     precio: 0,
     observaciones: "",
     usuario: 0,

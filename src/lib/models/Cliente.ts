@@ -25,4 +25,7 @@ export interface Cliente {
   claveRegistroMovil: string;
   fecha_alta: string;
   fecha_act: string;
+  redsocial1: string;
+  redsocial2: string;
+  redsocial3: string;
 }
