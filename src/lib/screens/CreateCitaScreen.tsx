@@ -411,7 +411,6 @@ function CreateCitaScreen() {
   };
   return (
     <>
-      {/* <Button onClick={() => (calendarRef.current.scheduler.customEditor()  )}>Salir</Button> */}
       <DialogComponent
         openModal={successInfo}
         onClose={() => setSuccessInfo(false)}

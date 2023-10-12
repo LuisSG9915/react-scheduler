@@ -71,6 +71,7 @@ function ClientesScreen() {
             telefono: "",
             email: "",
             fecha_nac: "",
+            redsocial1: "",
           });
           Swal.fire({
             icon: "success",
@@ -166,7 +167,6 @@ function ClientesScreen() {
                 name="fecha_nac"
                 onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
                 value={form.fecha_nac}
-                
               />
               <Typography variant="body1">Instagram: </Typography>
               <TextField
