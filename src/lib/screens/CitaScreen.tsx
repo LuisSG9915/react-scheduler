@@ -383,57 +383,11 @@ function CitaScreen() {
   };
 
   const columnHistorialClientes: GridColDef[] = [
-    {
-      field: "acciones",
-      headerName: "Acciones",
-      renderCell: (params) => (
-        <IconButton
-          size="small"
-          onClick={() => {
-            loadHistorialDetalle(
-              params.row.Cve_cliente,
-              params.row.NumVenta,
-              params.row.idProducto,
-              params.row.sucursal
-            );
-            setParamsDetalles({
-              Cve_cliente: params.row.Cve_cliente,
-              idProducto: params.row.idProducto,
-              numVenta: params.row.NumVenta,
-              sucursal: params.row.NombreSuc,
-              clave: params.row.id,
-              fecha: params.row.Fecha,
-            });
-            setIsModalOpen(true);
-          }}
-        >
-          <ManageSearchTwoToneIcon fontSize="small" />
-        </IconButton>
-      ),
-      align: "center",
-      headerAlign: "center",
-      flex: 1,
-    },
-    { field: "Cve_cliente", headerName: "Clave del cliente", resizable: true, minWidth: 150 },
-    { field: "NumVenta", headerName: "Numero de venta", resizable: true },
-    {
-      field: "NombreSuc",
-      headerName: "Nombre de la sucursal",
-
-      resizable: true,
-    },
-    { field: "Fecha", headerName: "Fecha", resizable: true, minWidth: 150 },
-    { field: "Clave", headerName: "Clave", resizable: true },
-    {
-      field: "Producto_Servicio",
-      headerName: "Producto o servicio",
-      resizable: true,
-      minWidth: 300,
-    },
-    { field: "Cantidad", headerName: "Cantidad", resizable: true },
-    { field: "Precio", headerName: "Precio", resizable: true },
-    { field: "Descuento", headerName: "Descuento", resizable: true },
-    { field: "Forma_pago", headerName: "Forma pago", resizable: true, minWidth: 50 },
+    { field: "Estilista", headerName: "Estilista", resizable: true, minWidth: 150 },
+    { field: "Servicio", headerName: "Servicio", resizable: true, minWidth: 250 },
+    { field: "fechaCita", headerName: "Fecha de cita", resizable: true, minWidth: 100 },
+    { field: "hora", headerName: "Hora", resizable: true, minWidth: 50 },
+    { field: "nombreSuc", headerName: "Sucursal", resizable: true, minWidth: 100 },
   ];
   const columnClientes: GridColDef[] = [
     { field: "descripcion", headerName: "Descripcion", width: 200 },
@@ -651,6 +605,9 @@ function CitaScreen() {
     });
     historialCitaFutura(datosParametros.idClienteSeparada);
   };
+  useEffect(() => {
+    historialCitaFutura(datosParametros.idClienteSeparada);
+  }, [datosParametros.idClienteSeparada]);
 
   const historialCitaFutura = (dato: any) => {
     jezaApi
@@ -1264,10 +1221,10 @@ function CitaScreen() {
             setParamsDetalles={setParamsDetalles}
           ></TableHistorial>
           <DataGrid
-            rows={historialClientes}
+            rows={datah1}
             columns={columnHistorialClientes}
             autoHeight
-            getRowId={(row) => row.Cve_cliente}
+            getRowId={(row) => row.fechaCita}
             initialState={{
               pagination: {
                 paginationModel: {
@@ -1292,6 +1249,7 @@ function CitaScreen() {
           </div>
         </div>
       </Modal>
+
       <Modal
         open={isModalOpen}
         onClose={() => {
@@ -1346,22 +1304,23 @@ function CitaScreen() {
             </table>
             <hr />
             <br />
+            <h2>Historial citas futuras</h2>
             <table style={tableStyles}>
               <thead>
                 <tr>
-                  <th style={thStyles}>Insumo</th>
-                  <th style={thStyles}>Cantidad</th>
-                  <th style={thStyles}>Precio</th>
-                  <th style={thStyles}>Importe</th>
+                  <th style={thStyles}>Fecha de cita</th>
+                  <th style={thStyles}>Hora</th>
+                  <th style={thStyles}>Estilista</th>
+                  <th style={thStyles}>Usuario registro</th>
                 </tr>
               </thead>
               <tbody>
-                {historialDetalle.map((item, index) => (
+                {datah1.map((item, index) => (
                   <tr key={index}>
-                    <td style={tdStyles}>{item.Insumo}</td>
-                    <td style={tdStyles}>{item.Cant}</td>
-                    <td style={tdStyles}>{item.precio}</td>
-                    <td style={tdStyles}>{item.importe}</td>
+                    <td style={tdStyles}>{item.fechaCita}</td>
+                    <td style={tdStyles}>{item.hora}</td>
+                    <td style={tdStyles}>{item.Estilista}</td>
+                    <td style={tdStyles}>{item.nombreUsrRegistra}</td>
                   </tr>
                 ))}
               </tbody>

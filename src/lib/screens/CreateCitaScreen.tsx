@@ -656,7 +656,8 @@ function CreateCitaScreen() {
                               onClick={() => confirmationDelete(Number(servicio.id))}
                               style={{ marginLeft: "auto", fontSize: 25 }}
                             />
-                            <EditIcon
+                            {/* Lo deshabilitamos */}
+                            {/* <EditIcon
                               style={{ marginLeft: "auto", fontSize: 25 }}
                               onClick={() => {
                                 setFormEditServicio({
@@ -671,7 +672,7 @@ function CreateCitaScreen() {
                                 });
                                 setModalServicioEdit(true);
                               }}
-                            />
+                            /> */}
                           </Grid>
                         </Grid>
                       </CardContent>

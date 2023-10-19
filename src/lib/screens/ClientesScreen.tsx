@@ -5,6 +5,8 @@ import { jezaApi } from "../api/jezaApi";
 import Swal from "sweetalert2";
 
 function ClientesScreen() {
+  const idSuc = new URLSearchParams(window.location.search).get("sucursal");
+
   const [form, setForm] = useState<Cliente>({
     id_cliente: 0,
     nombre: "",
@@ -57,7 +59,7 @@ function ClientesScreen() {
             form.telefono
           }&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${
             form.redsocial1 ? form.redsocial1 : "."
-          }&redsocial2=${"..."}&redsocial3=${"..."}`
+          }&redsocial2=${"..."}&redsocial3=${"..."}&sucOrigen=${idSuc}`
         )
         .then((response) => {
           setForm({
