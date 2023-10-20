@@ -335,7 +335,17 @@ function SchedulerScreen() {
   ) => {
     setLoading(true);
     changeLoadingValue(true);
-    putCita(updatedEvent);
+    filtroSeguridad("CAT_CITA_MOD").then((response) => {
+      if (response == false) {
+        setTimeout(() => {
+          setLoading(false);
+        }, 2500);
+        alert("No cuenta con permisos");
+      } else {
+        setVisualizar(true);
+        putCita(updatedEvent);
+      }
+    });
   };
 
   const currentDates = new Date();
@@ -445,6 +455,16 @@ function SchedulerScreen() {
 
     return true; // Se otorga el permiso
   };
+  const [visualizar, setVisualizar] = useState(false);
+  useEffect(() => {
+    filtroSeguridad("CAT_CITA_MOD").then((response) => {
+      if (response == false) {
+        setVisualizar(false);
+      } else {
+        setVisualizar(true);
+      }
+    });
+  }, []);
 
   return (
     <div>
@@ -473,20 +493,22 @@ function SchedulerScreen() {
           color={"info"}
           onClick={() => (window.location.href = "http://cbinfo.no-ip.info:9088/Ventas")}
         ></HomeIcon>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Sucursal"
-          value={dataEvent.sucursal}
-          onChange={handleChangeSelect}
-          name="sucursal"
-          size="small"
-        >
-          <MenuItem value={0}>Seleccione una sucursal</MenuItem>
-          <MenuItem value={21}>Barrio</MenuItem>
-          <MenuItem value={26}>San Pedro</MenuItem>
-          <MenuItem value={27}>CDMX</MenuItem>
-        </Select>
+        {visualizar ? (
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Sucursal"
+            value={dataEvent.sucursal}
+            onChange={handleChangeSelect}
+            name="sucursal"
+            size="small"
+          >
+            <MenuItem value={0}>Seleccione una sucursal</MenuItem>
+            <MenuItem value={21}>Barrio</MenuItem>
+            <MenuItem value={26}>San Pedro</MenuItem>
+            <MenuItem value={27}>CDMX</MenuItem>
+          </Select>
+        ) : null}
 
         <Button
           style={{ fontStyle: "italic" }}
@@ -543,7 +565,7 @@ function SchedulerScreen() {
 
             close();
           } else {
-            const permiso = filtroSeguridad("CAT_CITA_ADD").then((response) => {
+            filtroSeguridad("CAT_CITA_MOD").then((response) => {
               if (response) {
                 if (Number(idSuc) === Number(dataEvent.sucursal)) {
                   if (state.description.value.length > 0) {
