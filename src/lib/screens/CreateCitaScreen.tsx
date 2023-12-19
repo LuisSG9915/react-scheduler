@@ -488,7 +488,7 @@ function CreateCitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "70%",
+            width: "90%",
             maxHeight: "90%", // Cambiar height a maxHeight
             backgroundColor: "#fff",
             padding: 16,
@@ -504,6 +504,14 @@ function CreateCitaScreen() {
                 field: "nombre",
                 headerName: "Nombre",
                 width: 200,
+              },
+              {
+                field: "telefono",
+                headerName: "telefono",
+                width: 200,
+                renderCell(params) {
+                  return params.row.telefono ? params.row.telefono : "Sin numero";
+                },
               },
               {
                 field: "id",
@@ -701,7 +709,7 @@ function CreateCitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "60%",
+            width: "95%",
             maxHeight: "90%",
             backgroundColor: "#fff",
             padding: 16,

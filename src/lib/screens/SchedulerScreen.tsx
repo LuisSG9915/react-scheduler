@@ -13,16 +13,14 @@ import {
   DialogTitle,
 } from "@mui/material";
 import axios from "axios";
-import { format, startOfToday, setHours } from "date-fns";
-import { GridColDef } from "@mui/x-data-grid";
+import { format } from "date-fns";
 import { Scheduler } from "..";
 import { EstilistaResponse } from "../models/Estilista";
 import { Eventos } from "../models/Events";
-import { ServicioPost, Servicio } from "../models/Servicio";
+import { ServicioPost } from "../models/Servicio";
 import { SchedulerRef, ProcessedEvent, EventActions } from "../types";
 import { useNavigate } from "react-router-dom";
 import { EVENTS } from "../../data";
-import { id } from "date-fns/locale";
 import { useEstatusCitas } from "../hooks/useEstatusCitas";
 import { COLOR_ESTATUS_CITAS } from "../helpers/constants";
 import { useClientes } from "../hooks/useClientes";
@@ -333,14 +331,16 @@ function SchedulerScreen() {
     updatedEvent: ProcessedEvent,
     originalEvent: ProcessedEvent
   ) => {
-    setLoading(true);
     changeLoadingValue(true);
-    filtroSeguridad("CAT_CITA_MOD").then((response) => {
+    setLoading(true);
+    filtroSeguridad("CAT_CITA_ADD").then((response) => {
       if (response == false) {
-        setTimeout(() => {
-          setLoading(false);
-        }, 2500);
-        alert("No cuenta con permisos");
+        setVoidInfo(true);
+        setMessageDialog({
+          subtitle: "No cuenta con permisos ",
+          title: "Atención",
+        });
+        setLoading(false);
       } else {
         setVisualizar(true);
         putCita(updatedEvent);
@@ -353,7 +353,7 @@ function SchedulerScreen() {
   const ligaLocal = "http://localhost:3000/";
 
   const handleOpenNewWindow = () => {
-    const url = `${ligaLocal}Cliente?sucursal=${dataEvent.sucursal}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaProductiva}Cliente?sucursal=${dataEvent.sucursal}`; // Reemplaza esto con la URL que desees abrir
     const width = 500;
     const height = 1500;
     const left = (window.screen.width - width) / 2;
@@ -362,7 +362,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
-    const url = `${ligaLocal}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaProductiva}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1000;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -371,7 +371,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCitaScreen = ({ idCita, idUser, idCliente, fecha, flag }) => {
-    const url = `${ligaLocal}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaProductiva}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}`; // Reemplaza esto con la URL que desees abrir
     const width = 600;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -457,7 +457,7 @@ function SchedulerScreen() {
   };
   const [visualizar, setVisualizar] = useState(false);
   useEffect(() => {
-    filtroSeguridad("CAT_CITA_MOD").then((response) => {
+    filtroSeguridad("CAT_CITA_ADD").then((response) => {
       if (response == false) {
         setVisualizar(false);
       } else {
@@ -494,30 +494,32 @@ function SchedulerScreen() {
           onClick={() => (window.location.href = "http://cbinfo.no-ip.info:9088/Ventas")}
         ></HomeIcon>
         {visualizar ? (
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Sucursal"
-            value={dataEvent.sucursal}
-            onChange={handleChangeSelect}
-            name="sucursal"
-            size="small"
-          >
-            <MenuItem value={0}>Seleccione una sucursal</MenuItem>
-            <MenuItem value={21}>Barrio</MenuItem>
-            <MenuItem value={26}>San Pedro</MenuItem>
-            <MenuItem value={27}>CDMX</MenuItem>
-          </Select>
+          <>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Sucursal"
+              value={dataEvent.sucursal}
+              onChange={handleChangeSelect}
+              name="sucursal"
+              size="small"
+            >
+              <MenuItem value={0}>Seleccione una sucursal</MenuItem>
+              <MenuItem value={21}>Barrio</MenuItem>
+              <MenuItem value={26}>San Pedro</MenuItem>
+              <MenuItem value={27}>CDMX</MenuItem>
+              <MenuItem value={1074}>PRUEBAS SISTEMAS</MenuItem>
+            </Select>
+            <Button
+              style={{ fontStyle: "italic" }}
+              onClick={() => {
+                handleOpenNewWindow();
+              }}
+            >
+              Agregar Clientes
+            </Button>
+          </>
         ) : null}
-
-        <Button
-          style={{ fontStyle: "italic" }}
-          onClick={() => {
-            handleOpenNewWindow();
-          }}
-        >
-          Agregar Clientes
-        </Button>
       </Grid>
 
       <DialogComponent
@@ -565,7 +567,7 @@ function SchedulerScreen() {
 
             close();
           } else {
-            filtroSeguridad("CAT_CITA_MOD").then((response) => {
+            filtroSeguridad("CAT_CITA_ADD").then((response) => {
               if (response) {
                 if (Number(idSuc) === Number(dataEvent.sucursal)) {
                   if (state.description.value.length > 0) {

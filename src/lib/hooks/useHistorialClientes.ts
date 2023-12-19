@@ -11,14 +11,16 @@ export const useHistorialClientes = ({ cveCliente }: Props) => {
   const [historialClientes, setHistorialClientes] = useState<any[]>([]);
 
   const fetchEstatusCitas = async () => {
-    try {
-      const response: AxiosResponse<Cliente[]> = await jezaApi.get(
-        `/Historial?cliente=${cveCliente}`
-      );
-      setHistorialClientes(response.data);
-      console.log({ historialClientes });
-    } catch (error) {
-      console.log(error);
+    if (cveCliente > 0) {
+      try {
+        const response: AxiosResponse<Cliente[]> = await jezaApi.get(
+          `/Historial?cliente=${cveCliente}`
+        );
+        setHistorialClientes(response.data);
+        console.log({ historialClientes });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

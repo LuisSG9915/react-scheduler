@@ -108,6 +108,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
     console.log("A");
   };
   const idSuc = new URLSearchParams(window.location.search).get("idSuc");
+  const idRec = new URLSearchParams(window.location.search).get("idRec");
 
   const handleClose = (number: number) => {
     setAnchorEls(null);
@@ -174,12 +175,24 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
                 anchorEl={anchorEls}
                 open={open}
                 onClose={handleClose}
+                onClick={() => {
+                  console.log(idRec);
+                }}
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
               >
                 {estatusCitas.map((estado) => (
-                  <MenuItem key={estado.id} onClick={() => handleClose(estado.id)}>
+                  <MenuItem
+                    key={estado.id}
+                    onClick={() => {
+                      if (Number(idRec) == 2235) {
+                        alert("Sin permisos para editar el estatus");
+                        return;
+                      }
+                      handleClose(estado.id);
+                    }}
+                  >
                     {estado.descripcionEstatus}
                   </MenuItem>
                 ))}
@@ -204,12 +217,10 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
           ) : (
             <>
               <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
-                {`${event.description}  `}
+                {`${event.description} - ${event.numeroTelefono} `}
               </Typography>
-              <Typography style={{ padding: "5px 0", color: "black" }} noWrap>
-                {`${event.idEstatus !== 4 ? "" : event.ServicioDescripción}  ${
-                  event.idEstatus !== 1009 ? "" : event.ServicioDescripción
-                } `}
+              <Typography style={{ color: "black" }} noWrap>
+                {event.ServicioDescripción}
               </Typography>
             </>
           )}

@@ -25,6 +25,11 @@ export const putCitaEstado = async (
   sucursal: any
 ) => {
   if (idEstatus > 0) {
+    if (idUsuario == 2235) {
+      alert("Sin permisos");
+      return;
+    }
+
     await axios.put(
       `http://cbinfo.no-ip.info:9089/Cita?id=${
         idEstatus === 4 ? 0 : event_id

@@ -319,9 +319,23 @@ function CitaScreen() {
     },
   ];
   const columnsProductos4Edit: GridColDef[] = [
-    { field: "descripcion", headerName: "Descripcion", width: 200 },
-    { field: "precio", headerName: "Precio", width: 100 },
-    { field: "tiempo", headerName: "Tiempo", width: 80 },
+    { field: "descripcion", headerName: "Descripcion", width: 290 },
+    {
+      field: "precio",
+      headerName: "Precio",
+      width: 80,
+      renderCell(params) {
+        return params.row.precio.toLocaleString("en-US", { style: "currency", currency: "USD" });
+      },
+    },
+    {
+      field: "tiempo",
+      headerName: "Tiempo",
+      width: 80,
+      renderCell(params) {
+        return params.row.tiempo + " min";
+      },
+    },
     {
       field: "action",
       headerName: "Acciones",
@@ -720,10 +734,10 @@ function CitaScreen() {
                           <Grid container alignItems="center" justifyContent="space-between">
                             <Grid item>
                               <Typography variant="body1">
-                                Servicio: {servicio.descripcion}
+                                Servicio: {servicio.descripcion ? servicio.descripcion : ""}
                               </Typography>
                               <Typography variant="caption">
-                                Cantidad: {servicio.cantidad + "   "}
+                                Cantidad: {servicio.cantidad ? servicio.cantidad : "" + "   "}
                               </Typography>
                               <Typography variant="caption">
                                 {servicio.observaciones
@@ -840,7 +854,7 @@ function CitaScreen() {
                   marginBottom: 8, // Agregar margen inferior entre elementos
                 }}
               >
-                <p key={cliente.id}>{cliente.nombre + cliente.id}</p>
+                <p key={cliente.id}>{cliente.nombre}</p>
                 <Button
                   variant="outlined"
                   onClick={() => {
@@ -1125,7 +1139,7 @@ function CitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "85%",
+            width: "95%",
             height: "70%",
             backgroundColor: "#fff",
             padding: 16,
@@ -1133,7 +1147,7 @@ function CitaScreen() {
             overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
           }}
         >
-          <h2> Selección de servicio </h2>
+          <h2> Selección de servicios </h2>
           <DataGrid
             rows={dataProductos4}
             columns={columnsProductos4}
@@ -1215,7 +1229,7 @@ function CitaScreen() {
           <hr />
           <h2> Historial de citas </h2>
           <TableHistorial
-            datah={datah}
+            datah={historialClientes}
             loadHistorialDetalle={loadHistorialDetalle}
             setIsModalOpen={setIsModalOpen}
             setParamsDetalles={setParamsDetalles}
@@ -1346,7 +1360,7 @@ function CitaScreen() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "60%",
+            width: "90%",
             maxHeight: "90%",
             backgroundColor: "#fff",
             padding: 16,
