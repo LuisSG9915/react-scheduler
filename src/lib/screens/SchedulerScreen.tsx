@@ -351,9 +351,10 @@ function SchedulerScreen() {
   const currentDates = new Date();
   const ligaProductiva = "http://cbinfo.no-ip.info:9085/";
   const ligaLocal = "http://localhost:3000/";
+  const ligaPruebas = "http://cbinfo.no-ip.info:9082/";
 
   const handleOpenNewWindow = () => {
-    const url = `${ligaProductiva}Cliente?sucursal=${dataEvent.sucursal}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaPruebas}Cliente?sucursal=${dataEvent.sucursal}`; // Reemplaza esto con la URL que desees abrir
     const width = 500;
     const height = 1500;
     const left = (window.screen.width - width) / 2;
@@ -362,7 +363,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
-    const url = `${ligaProductiva}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaPruebas}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
     const width = 1000;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -371,7 +372,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCitaScreen = ({ idCita, idUser, idCliente, fecha, flag }) => {
-    const url = `${ligaProductiva}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaPruebas}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}`; // Reemplaza esto con la URL que desees abrir
     const width = 600;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -577,9 +578,12 @@ function SchedulerScreen() {
 
             close();
           } else {
-            filtroSeguridad("CAT_CITA_ADD").then((response) => {
+            filtroSeguridad("CAT_CITA_ADD").then(async (response) => {
               if (response) {
-                if (filtroSeguridad("EDICION_AGENDA_TOTAL")) {
+                if (
+                  (await filtroSeguridad("EDICION_AGENDA_TOTAL")) ||
+                  Number(idSuc) === Number(dataEvent.sucursal)
+                ) {
                   if (state.description.value.length > 0) {
                     if (Number(estatusState) == 4 || Number(estatusState) == 1009) {
                       handleOpenNewWindowCitaScreen({
