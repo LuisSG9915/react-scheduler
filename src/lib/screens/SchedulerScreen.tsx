@@ -84,6 +84,7 @@ function SchedulerScreen() {
   const idSuc = new URLSearchParams(window.location.search).get("idSuc");
   const suc = new URLSearchParams(window.location.search).get("suc");
   const idRec = new URLSearchParams(window.location.search).get("idRec");
+  const tk = new URLSearchParams(window.location.search).get("tk");
 
   useEffect(() => {
     setDataEvent({ ...dataEvent, sucursal: Number(idSuc), d_sucursal: suc, idRec: Number(idRec) });
@@ -103,8 +104,8 @@ function SchedulerScreen() {
       setLoading(true);
 
       try {
-        const response = await axios.get(
-          `http://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}&fecha=${format(
+        const response = await jezaApi.get(
+          `/Estilistas?suc=${dataEvent.sucursal}&fecha=${format(
             new Date(nuevaFechaPrueba),
             "yyyy-MM-dd"
           )}`
@@ -129,9 +130,7 @@ function SchedulerScreen() {
 
   const getCitaServicios = async (id: number) => {
     try {
-      const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=20230727&sucursal=21`
-      );
+      const response = await jezaApi.get(`/Citaservicio?id=${id}&fecha=20230727&sucursal=21`);
       setDatasServicios(response.data);
       console.log(response.data);
     } catch (error) {
@@ -215,8 +214,8 @@ function SchedulerScreen() {
         const temp = new Date(nuevaFechaPrueba);
         const formattedDate = format(temp, "yyyyMMdd");
         try {
-          const response = axios.get(
-            `http://cbinfo.no-ip.info:9089/Cita?cliente=%&f1=${formattedDate}&suc=${dataEvent.sucursal}`
+          const response = jezaApi.get(
+            `/Cita?cliente=%&f1=${formattedDate}&suc=${dataEvent.sucursal}`
           );
           const formattedData = (await response).data.map((evento: Eventos) => ({
             ...evento,
@@ -287,9 +286,7 @@ function SchedulerScreen() {
   };
 
   const deleteCita = (id: number) => {
-    axios
-      .delete(`http://cbinfo.no-ip.info:9089/Cita?id=${id}`)
-      .then((response) => alert("Cita eliminada con éxito"));
+    jezaApi.delete(`/Cita?id=${id}`).then((response) => alert("Cita eliminada con éxito"));
   };
 
   const putCita = (cita: ProcessedEvent) => {
@@ -311,15 +308,14 @@ function SchedulerScreen() {
       });
       setLoading(false);
     } else {
-      axios
+      jezaApi
         .put(
-          `http://cbinfo.no-ip.info:9089/Cita?id=${cita.event_id}&cia=26&sucursal=${
-            dataEvent.sucursal
-          }&fechaCita=${format(cita.start, "yyyy-MM-dd HH:mm")}&idCliente=${
-            cita.idCliente
-          }&tiempo=${cita.tiempo ? cita.tiempo : 0}&idEstilista=${cita.admin_id}&idUsuario=${
-            cita.idUsuario
-          }&estatus=${cita.estatus}`
+          `/Cita?id=${cita.event_id}&cia=26&sucursal=${dataEvent.sucursal}&fechaCita=${format(
+            cita.start,
+            "yyyy-MM-dd HH:mm"
+          )}&idCliente=${cita.idCliente}&tiempo=${cita.tiempo ? cita.tiempo : 0}&idEstilista=${
+            cita.admin_id
+          }&idUsuario=${cita.idUsuario}&estatus=${cita.estatus}`
         )
         .then((response) => peticiones())
         .catch((e) => alert(e));
@@ -349,11 +345,11 @@ function SchedulerScreen() {
   };
 
   const currentDates = new Date();
-  const ligaProductiva = "http://cbinfo.no-ip.info:9085/";
+  // const ligaProductiva = "http://cbinfo.no-ip.info:9085/";
   const ligaLocal = "http://localhost:3000/";
 
   const handleOpenNewWindow = () => {
-    const url = `${ligaProductiva}Cliente?sucursal=${dataEvent.sucursal}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}Cliente?sucursal=${dataEvent.sucursal}&tk=${tk}`; // Reemplaza esto con la URL que desees abrir
     const width = 500;
     const height = 1500;
     const left = (window.screen.width - width) / 2;
@@ -362,7 +358,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
-    const url = `${ligaProductiva}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&tk=${tk}`; // Reemplaza esto con la URL que desees abrir
     const width = 1000;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -371,7 +367,7 @@ function SchedulerScreen() {
     window.open(url, "_blank", features);
   };
   const handleOpenNewWindowCitaScreen = ({ idCita, idUser, idCliente, fecha, flag }) => {
-    const url = `${ligaProductiva}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}`; // Reemplaza esto con la URL que desees abrir
+    const url = `${ligaLocal}CitaScreen?idCita=${idCita}&idUser=${idUser}&idCliente=${idCliente}&fecha=${fecha}&idSuc=${dataEvent.sucursal}&idRec=${idRec}&flag=${flag}&tk=${tk}`; // Reemplaza esto con la URL que desees abrir
     const width = 600;
     const height = 800;
     const left = (window.screen.width - width) / 2;
@@ -448,22 +444,34 @@ function SchedulerScreen() {
     // Ahora, session tiene elementos, puedes usar session.map
 
     const response = await jezaApi.get(`/Permiso?usuario=${idRec}&modulo=${modulo}`);
-
     if (response.data[0].permiso == false) {
       return false; // No se otorga el permiso
     }
 
     return true; // Se otorga el permiso
   };
+
+
+
   const [visualizar, setVisualizar] = useState(false);
   useEffect(() => {
-    filtroSeguridad("CAT_CITA_ADD").then((response) => {
-      if (response == false) {
-        setVisualizar(false);
-      } else {
-        setVisualizar(true);
-      }
-    });
+    filtroSeguridad("ACCESS_SUCURSAL_AGENDA")
+      .then((response) => {
+        if (response == false) {
+          setVisualizar(false);
+        } else {
+          setVisualizar(true);
+        }
+        if (Number(idRec) == 2235) {
+          setVisualizar(true);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          alert("Su sesión ha expirado, favor de ingresar de nuevo ");
+          window.location.href = "http://localhost:5173/";
+        }
+      });
   }, []);
 
   return (
@@ -569,7 +577,7 @@ function SchedulerScreen() {
           } else {
             filtroSeguridad("CAT_CITA_ADD").then((response) => {
               if (response) {
-                if (Number(idSuc) === Number(dataEvent.sucursal)) {
+                if (filtroSeguridad("EDICION_AGENDA_TOTAL")) {
                   if (state.description.value.length > 0) {
                     if (Number(estatusState) == 4 || Number(estatusState) == 1009) {
                       handleOpenNewWindowCitaScreen({

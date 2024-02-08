@@ -103,7 +103,7 @@ function CitaScreen() {
 
   const peticionEstilista = async () => {
     try {
-      const response = await axios.get("http://cbinfo.no-ip.info:9089/Trabajador?id=0");
+      const response = await jezaApi.get("/Trabajador?id=0");
       const reponseTemporal = response.data;
       const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
         ...evento,
@@ -203,9 +203,9 @@ function CitaScreen() {
     const temporal = new Date(datosParametros.fecha);
     const nuevaFecha = format(temporal, "yyyy-MM-dd HH:mm");
 
-    axios
+    jezaApi
       .put(
-        `http://cbinfo.no-ip.info:9089/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${
+        `/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${
           datosParametros.idSuc
         }&fechaCita=${nuevaFecha}&idCliente=${datosParametros.idClienteSeparada}&tiempo=${
           datosParametros.tiempoSeparada.toString() === "NaN" ? 0 : datosParametros.tiempoSeparada
@@ -250,8 +250,8 @@ function CitaScreen() {
     const formattedDate = format(fechaTemporal, "yyyyMMdd");
     if (Number(datosParametros.idCita) > 1) {
       try {
-        const response = await axios.get(
-          `http://cbinfo.no-ip.info:9089/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
+        const response = await jezaApi.get(
+          `/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
         );
         if (datosParametros.idCitaServicio > 0) {
           const formattedTempCita = [

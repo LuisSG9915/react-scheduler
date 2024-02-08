@@ -93,25 +93,7 @@ function CreateCitaScreen() {
     });
   }, []);
 
-  // const postCita = async () => {
-  //   const fechaTemporal = new Date(datosParametros.fecha);
-  //   const formattedDate = format(fechaTemporal, "yyyy-MM-dd HH:mm");
-  //   if (!dataEvent.idCliente) {
-  //     setVoidInfo(true);
-  //   } else {
-  //     const response = await axios
-  //       .post(
-  //         `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${formattedDate}&idCliente=${dataEvent.idCliente}&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${datosParametros.idRec}&estatus=1`
-  //       )
-  //       .then((response) => {
-  //         setFormServicio({ ...formServicio, id_Cita: Number(response.data[0].mensaje2) });
-  //         setTimeout(() => {
-  //           setModalServiciosAgregar(true);
-  //         }, 1111);
-  //       });
-  //     return response;
-  //   }
-  // };
+
 
   const postCita = async () => {
     const fechaTemporal = new Date(datosParametros.fecha);
@@ -122,14 +104,12 @@ function CreateCitaScreen() {
     } else {
       try {
         if (formServicio.tiempo > 0) {
-          const response = await axios.post(
-            `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${
-              datosParametros.idSuc
-            }&fechaCita=${temp2 > 0 ? formattedDate : formattedDate}&idCliente=${
-              dataEvent.idCliente
-            }&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${
-              datosParametros.idRec
-            }&estatus=1`
+          const response = await jezaApi.post(
+            `/Cita?cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${
+              temp2 > 0 ? formattedDate : formattedDate
+            }&idCliente=${dataEvent.idCliente}&tiempo=0&idEstilista=${
+              datosParametros.idUser
+            }&idUsuario=${datosParametros.idRec}&estatus=1`
           );
 
           setFormServicio({
@@ -210,8 +190,8 @@ function CreateCitaScreen() {
     const temporal = new Date(datosParametros.fecha);
     const fechaFormateada = format(temporal, "yyyyMMdd");
     try {
-      const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089//CitaServicio?idcliente=${dataEvent.idCliente}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
+      const response = await jezaApi.get(
+        `/CitaServicio?idcliente=${dataEvent.idCliente}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
       );
       setDatasServicios(response.data);
       console.log(response.data);
