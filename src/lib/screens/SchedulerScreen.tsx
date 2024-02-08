@@ -457,13 +457,23 @@ function SchedulerScreen() {
   };
   const [visualizar, setVisualizar] = useState(false);
   useEffect(() => {
-    filtroSeguridad("CAT_CITA_ADD").then((response) => {
-      if (response == false) {
-        setVisualizar(false);
-      } else {
-        setVisualizar(true);
-      }
-    });
+    filtroSeguridad("ACCESS_SUCURSAL_AGENDA")
+      .then((response) => {
+        if (response == false) {
+          setVisualizar(false);
+        } else {
+          setVisualizar(true);
+        }
+        if (Number(idRec) == 2235) {
+          setVisualizar(true);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          alert("Su sesión ha expirado, favor de ingresar de nuevo ");
+          window.location.href = "http://localhost:5173/";
+        }
+      });
   }, []);
 
   return (
