@@ -579,7 +579,7 @@ function SchedulerScreen() {
           } else {
             filtroSeguridad("CAT_CITA_ADD").then((response) => {
               if (response) {
-                if (Number(idSuc) === Number(dataEvent.sucursal)) {
+                if (filtroSeguridad("EDICION_AGENDA_TOTAL")) {
                   if (state.description.value.length > 0) {
                     if (Number(estatusState) == 4 || Number(estatusState) == 1009) {
                       handleOpenNewWindowCitaScreen({
