@@ -120,7 +120,7 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate }: EventItemPro
       event.admin_id,
       event.idUsuario,
       number,
-      idSuc
+      event.sucursal
     ).then(() => window.location.reload());
   };
 

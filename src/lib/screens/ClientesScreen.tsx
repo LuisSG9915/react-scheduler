@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Cliente } from "../models/Cliente";
 import { jezaApi } from "../api/jezaApi";
 import Swal from "sweetalert2";
+import { ligaAgenda } from "../consts/ligaAgenda";
 
 function ClientesScreen() {
   const idSuc = new URLSearchParams(window.location.search).get("sucursal");
@@ -38,17 +39,7 @@ function ClientesScreen() {
   });
 
   const postCliente = () => {
-    if (
-      !form.nombre ||
-      !form.domicilio ||
-      !form.ciudad ||
-      !form.estado ||
-      !form.colonia ||
-      !form.cp ||
-      !form.telefono ||
-      !form.email ||
-      !form.fecha_nac
-    ) {
+    if (!form.nombre || !form.telefono || !form.email || !form.redsocial1 || !form.fecha_nac) {
       alert("Hacen falta datos, favor de revisarlos");
     } else {
       jezaApi
@@ -77,12 +68,25 @@ function ClientesScreen() {
           });
           Swal.fire({
             icon: "success",
-            //   text: `${response.data[0].mensaje1}`,
             text: `Registro realizado correctamente`,
             confirmButtonColor: "#3085d6",
           });
         });
     }
+  };
+  const idUser = new URLSearchParams(window.location.search).get("idUser");
+  const fecha = new URLSearchParams(window.location.search).get("fecha");
+  const idRec = new URLSearchParams(window.location.search).get("idRec");
+
+
+  const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
+    const url = `${ligaAgenda}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${idSuc}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const width = 1000;
+    const height = 800;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    const features = `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0,scrollbars=1,resizable=1`;
+    window.open(url, "_blank", features);
   };
 
   return (
@@ -103,22 +107,24 @@ function ClientesScreen() {
                 value={form.nombre}
                 placeholder="Ingrese el nombre del cliente"
               />
-              <Typography variant="body1">Domicilio:</Typography>
+
+              <Typography variant="body1">E-mail:</Typography>
               <TextField
-                type="text"
-                name="domicilio"
-                onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
-                value={form.domicilio}
-                placeholder="Ingrese el Domicilio del cliente"
+                type="email"
+                name="email"
+                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
+                value={form.email}
+                placeholder="Ingrese el Correo Electrónico del Cliente"
               />
-              <Typography variant="body1">Ciudad:</Typography>
+
+              <Typography variant="body1">Fecha de nacimiento:</Typography>
               <TextField
-                type="text"
-                name="ciudad"
-                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
-                value={form.ciudad}
-                placeholder="Ingrese la Ciudad"
+                type="date"
+                name="fecha_nac"
+                onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
+                value={form.fecha_nac}
               />
+
               <Typography variant="body1">Estado:</Typography>
               <TextField
                 type="text"
@@ -139,14 +145,6 @@ function ClientesScreen() {
 
             {/* Second column */}
             <Grid item xs={6}>
-              <Typography variant="body1">Codigo Postal:</Typography>
-              <TextField
-                type="number"
-                name="cp"
-                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                value={form.cp}
-                placeholder="Ingrese el Código Postal"
-              />
               <Typography variant="body1">Teléfono:</Typography>
               <TextField
                 type="text"
@@ -154,21 +152,6 @@ function ClientesScreen() {
                 onChange={(e) => setForm({ ...form, telefono: String(e.target.value) })}
                 value={form.telefono}
                 placeholder="Ingrese el Número Telefónico del Cliente"
-              />
-              <Typography variant="body1">E-mail:</Typography>
-              <TextField
-                type="email"
-                name="email"
-                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
-                value={form.email}
-                placeholder="Ingrese el Correo Electrónico del Cliente"
-              />
-              <Typography variant="body1">Fecha de nacimiento:</Typography>
-              <TextField
-                type="date"
-                name="fecha_nac"
-                onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
-                value={form.fecha_nac}
               />
               <Typography variant="body1">Instagram: </Typography>
               <TextField
@@ -178,6 +161,30 @@ function ClientesScreen() {
                 value={form.redsocial1}
                 placeholder="Ingrese el instagram"
               />
+              <Typography variant="body1">Domicilio:</Typography>
+              <TextField
+                type="text"
+                name="domicilio"
+                onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
+                value={form.domicilio}
+                placeholder="Ingrese el Domicilio del cliente"
+              />
+              <Typography variant="body1">Codigo Postal:</Typography>
+              <TextField
+                type="number"
+                name="cp"
+                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
+                value={form.cp}
+                placeholder="Ingrese el Código Postal"
+              />
+              <Typography variant="body1">Ciudad:</Typography>
+              <TextField
+                type="text"
+                name="ciudad"
+                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
+                value={form.ciudad}
+                placeholder="Ingrese la Ciudad"
+              />
             </Grid>
           </Grid>
           <br />
@@ -185,6 +192,19 @@ function ClientesScreen() {
           <Button onClick={() => postCliente()} variant="contained">
             Guardar
           </Button>
+          <br />
+          {/* <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              handleOpenNewWindowCreateCitaScreen({
+                idUsuario: null,
+                fecha: Date(),
+              });
+            }}
+          >
+            Crear cita
+          </Button> */}
         </Box>
       </Container>
     </>

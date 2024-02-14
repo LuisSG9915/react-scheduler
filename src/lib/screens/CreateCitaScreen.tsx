@@ -34,11 +34,16 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CloseIcon from "@mui/icons-material/Close";
 import { SchedulerRef } from "../types";
 import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
+import { useNominaTrabajadores } from "../hooks/useTrabajadores";
+import { ligaAgenda } from "../consts/ligaAgenda";
 function CreateCitaScreen() {
   const calendarRef = useRef<SchedulerRef>(null);
 
-  const { dataClientes } = useClientesWithUseEffect();
+  const { dataClientes, fetchClientes } = useClientesWithUseEffect();
+  const { dataTrabajadores } = useNominaTrabajadores();
   const [modalCliente, setmodalCliente] = useState(false);
+  const [modalTrabajador, setmodalTrabajador] = useState(false);
+
   const [datasServicios, setDatasServicios] = useState<[]>([]);
 
   const minDateTime = setHours(startOfToday(), 8);
@@ -127,9 +132,9 @@ function CreateCitaScreen() {
               datosParametros.idSuc
             }&fechaCita=${temp2 > 0 ? formattedDate : formattedDate}&idCliente=${
               dataEvent.idCliente
-            }&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${
-              datosParametros.idRec
-            }&estatus=1`
+            }&tiempo=0&idEstilista=${
+              datosParametros.idUser ? datosParametros.idUser : dataEvent.idUsuario
+            }&idUsuario=${datosParametros.idRec}&estatus=1`
           );
 
           setFormServicio({
@@ -301,7 +306,7 @@ function CreateCitaScreen() {
               formServicio.idServicio
             }&cantidad=${formServicio.cantidad}&precio=${formServicio.precio}&observaciones=${
               formServicio.observaciones ? formServicio.observaciones : "."
-            }&usuario=${datosParametros.idUser}`
+            }&usuario=${datosParametros.idUser ? datosParametros.idUser : idRec}`
           )
           .then(() => {
             setTextSuccessInfo("Se agendó la cita correctamente...");
@@ -409,6 +414,17 @@ function CreateCitaScreen() {
     setid(id);
     // deleteServicio(id);
   };
+
+  const handleOpenNewWindow = () => {
+    const url = `${ligaAgenda}Cliente?sucursal=${datosParametros.idSuc}&idSuc=${datosParametros.idSuc}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
+    const width = 500;
+    const height = 1500;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    const features = `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0,scrollbars=1,resizable=1`;
+    window.open(url, "_blank", features);
+  };
+
   return (
     <>
       <DialogComponent
@@ -469,6 +485,25 @@ function CreateCitaScreen() {
             Buscar
           </Button>
         </ButtonGroup>
+
+        {idUser == "null" ? (
+          <>
+            <p>Estilista</p>
+            <Select name="nombreCliente" value={dataEvent.idUsuario} disabled>
+              <MenuItem value={0}> Seleccione un cliente </MenuItem>
+              {dataTrabajadores.map((cte) => (
+                <MenuItem key={cte.id} value={cte.id}>
+                  {cte.nombre}
+                </MenuItem>
+              ))}
+            </Select>
+            <ButtonGroup style={{ marginTop: 15, direction: "rtl" }}>
+              <Button variant="contained" color="primary" onClick={() => setmodalTrabajador(true)}>
+                Buscar
+              </Button>
+            </ButtonGroup>
+          </>
+        ) : null}
       </FormGroup>
       <br />
       <br />
@@ -496,7 +531,21 @@ function CreateCitaScreen() {
             overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
           }}
         >
-          <h2> Búsqueda de clientes </h2>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <h2>Búsqueda de clientes</h2>
+            </Grid>
+            <Grid item>
+              <Button onClick={handleOpenNewWindow} color="secondary" variant="contained">
+                Agregar cliente
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button onClick={() => fetchClientes()} color="success" variant="contained">
+                Actualizar
+              </Button>
+            </Grid>
+          </Grid>
           <DataGrid
             rows={dataClientesWithIds}
             columns={[
@@ -525,6 +574,64 @@ function CreateCitaScreen() {
                       setDataEvent({
                         ...dataEvent,
                         idCliente: params.row.id_cliente,
+                      });
+                    }}
+                  >
+                    Seleccionar
+                  </Button>
+                ),
+              },
+            ]}
+            autoHeight // Asegura que el DataGrid tenga una altura adecuada
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 6,
+                },
+              },
+            }}
+            pageSizeOptions={[8]}
+            disableRowSelectionOnClick
+          />
+        </div>
+      </Modal>
+
+      <Modal open={modalTrabajador} onClose={() => setmodalCliente(false)}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%",
+            maxHeight: "90%", // Cambiar height a maxHeight
+            backgroundColor: "#fff",
+            padding: 16,
+            borderRadius: 4,
+            overflow: "auto", // Aplicar scroll si el contenido excede el tamaño del contenedor
+          }}
+        >
+          <h2> Búsqueda de trabajadores </h2>
+          <DataGrid
+            rows={dataTrabajadores}
+            columns={[
+              {
+                field: "nombre",
+                headerName: "Nombre",
+                width: 200,
+              },
+              {
+                field: "id",
+                headerName: "Seleccionar",
+                width: 130,
+                renderCell: (params) => (
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setmodalTrabajador(false);
+                      setDataEvent({
+                        ...dataEvent,
+                        idUsuario: params.row.id,
                       });
                     }}
                   >
@@ -664,23 +771,6 @@ function CreateCitaScreen() {
                               onClick={() => confirmationDelete(Number(servicio.id))}
                               style={{ marginLeft: "auto", fontSize: 25 }}
                             />
-                            {/* Lo deshabilitamos */}
-                            {/* <EditIcon
-                              style={{ marginLeft: "auto", fontSize: 25 }}
-                              onClick={() => {
-                                setFormEditServicio({
-                                  cantidad: servicio.cantidad,
-                                  id_Cita: servicio.id_Cita,
-                                  idServicio: servicio.idServicio,
-                                  observaciones: servicio.observaciones,
-                                  precio: servicio.precio,
-                                  usuario: servicio.idCliente,
-                                  d_servicio: servicio.descripcion,
-                                  id: servicio.id,
-                                });
-                                setModalServicioEdit(true);
-                              }}
-                            /> */}
                           </Grid>
                         </Grid>
                       </CardContent>
