@@ -1,4 +1,13 @@
-import { Typography, TextField, Container, Box, Button, Grid } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Container,
+  Box,
+  Button,
+  Grid,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 import React, { useState } from "react";
 import { Cliente } from "../models/Cliente";
 import { jezaApi } from "../api/jezaApi";
@@ -36,6 +45,7 @@ function ClientesScreen() {
     redsocial1: "",
     redsocial2: "",
     redsocial3: "",
+    recibirCorreo: false,
   });
 
   const postCliente = () => {
@@ -50,7 +60,9 @@ function ClientesScreen() {
             form.telefono
           }&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${
             form.redsocial1 ? form.redsocial1 : "."
-          }&redsocial2=${"..."}&redsocial3=${"..."}&sucOrigen=${idSuc}`
+          }&redsocial2=${"..."}&redsocial3=${"..."}&sucOrigen=${idSuc}&recibirCorreo=${
+            form.recibirCorreo
+          }`
         )
         .then((response) => {
           setForm({
@@ -77,7 +89,6 @@ function ClientesScreen() {
   const idUser = new URLSearchParams(window.location.search).get("idUser");
   const fecha = new URLSearchParams(window.location.search).get("fecha");
   const idRec = new URLSearchParams(window.location.search).get("idRec");
-
 
   const handleOpenNewWindowCreateCitaScreen = ({ idUsuario, fecha }) => {
     const url = `${ligaAgenda}CreateCitaScreen?idUser=${idUsuario}&fecha=${fecha}&idSuc=${idSuc}&idRec=${idRec}`; // Reemplaza esto con la URL que desees abrir
@@ -184,6 +195,16 @@ function ClientesScreen() {
                 onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
                 value={form.ciudad}
                 placeholder="Ingrese la Ciudad"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    onChange={(e) => {
+                      setForm({ ...form, recibirCorreo: e.target.checked });
+                    }}
+                  />
+                }
+                label="No recibir correos"
               />
             </Grid>
           </Grid>

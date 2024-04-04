@@ -28,4 +28,5 @@ export interface Cliente {
   redsocial1: string;
   redsocial2: string;
   redsocial3: string;
+  recibirCorreo?: boolean;
 }
