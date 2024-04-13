@@ -50,7 +50,7 @@ function ClientesScreen() {
 
   const postCliente = () => {
     const regexCorreo =
-      /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      /^(?:[a-zA-Z0-9.%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
     if (!regexCorreo.test(form.email)) {
       alert("Por favor ingrese un correo electrónico válido");
       return;

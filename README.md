@@ -1,5 +1,5 @@
 Como correr el programa:
-npm run webpack
+npm run START
 
 Como construir el build:
 npm run webpack
