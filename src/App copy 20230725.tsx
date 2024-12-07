@@ -132,7 +132,7 @@ function App() {
   const peticion = async () => {
     try {
       const response = await axios.get(
-        "http://cbinfo.no-ip.info:9089/Cita?id=%&suc=%&estilista=%&f1=20230101&f2=20231212&cliente=%&estatus=%"
+        "https://cbinfo.no-ip.info:9089/Cita?id=%&suc=%&estilista=%&f1=20230101&f2=20231212&cliente=%&estatus=%"
       );
       setDatas(response.data);
     } catch (error) {
@@ -142,7 +142,7 @@ function App() {
 
   const peticionEstilista = async () => {
     try {
-      const response = await axios.get("http://cbinfo.no-ip.info:9089/Trabajador?id=0");
+      const response = await axios.get("https://cbinfo.no-ip.info:9089/Trabajador?id=0");
       const reponseTemporal = response.data;
       const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
         ...evento,
@@ -162,7 +162,7 @@ function App() {
   const getCitaServicios = async (id: number) => {
     try {
       const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=20230720&sucursal=21`
+        `https://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=20230720&sucursal=21`
       );
       setDatasServicios(response.data);
       console.log(response.data);
@@ -260,7 +260,7 @@ function App() {
   const peticiones = async () => {
     try {
       const response = await axios.get(
-        "http://cbinfo.no-ip.info:9089/Cita?id=%&suc=%&estilista=%&f1=20230101&f2=20231212&cliente=%&estatus=%"
+        "https://cbinfo.no-ip.info:9089/Cita?id=%&suc=%&estilista=%&f1=20230101&f2=20231212&cliente=%&estatus=%"
       );
       const formattedData = response.data.map((evento: Eventos) => ({
         ...evento,
@@ -300,7 +300,7 @@ function App() {
   const postCita = (idUsuario: number) => {
     axios
       .post(
-        `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=21&fechaCita=${dataEvent.fechaCita}&idCliente=${dataEvent.idCliente}&tiempo=15&idEstilista=${idUsuario}&idUsuario=96&estatus=1`
+        `https://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=21&fechaCita=${dataEvent.fechaCita}&idCliente=${dataEvent.idCliente}&tiempo=15&idEstilista=${idUsuario}&idUsuario=96&estatus=1`
       )
       .then((response) => {
         alert("Cita realizada");
@@ -359,14 +359,14 @@ function App() {
 
   const deleteCita = (id: number) => {
     axios
-      .delete(`http://cbinfo.no-ip.info:9089/Cita?id=${id}`)
+      .delete(`https://cbinfo.no-ip.info:9089/Cita?id=${id}`)
       .then((response) => alert("Cita eliminada con éxito"));
   };
 
   const putCita = (cita: ProcessedEvent) => {
     axios
       .put(
-        `http://cbinfo.no-ip.info:9089/Cita?id=${
+        `https://cbinfo.no-ip.info:9089/Cita?id=${
           cita.event_id
         }&cia=26&sucursal=21&fechaCita=${format(cita.start, "yyyy-MM-dd HH:mm")}&idCliente=${
           cita.idCliente
@@ -381,7 +381,7 @@ function App() {
     console.log(dataEvent);
     axios
       .put(
-        `http://cbinfo.no-ip.info:9089/Cita?id=${dataEvent.event_id}&cia=26&sucursal=21&fechaCita=${dataEvent.fechaCita}&idCliente=${dataEvent.idCliente}&tiempo=${dataEvent.tiempo}&idEstilista=${dataEvent.admin_id}&idUsuario=${dataEvent.idUsuario}&estatus=${dataEvent.idEstatus}`
+        `https://cbinfo.no-ip.info:9089/Cita?id=${dataEvent.event_id}&cia=26&sucursal=21&fechaCita=${dataEvent.fechaCita}&idCliente=${dataEvent.idCliente}&tiempo=${dataEvent.tiempo}&idEstilista=${dataEvent.admin_id}&idUsuario=${dataEvent.idUsuario}&estatus=${dataEvent.idEstatus}`
       )
       .then((response) => {
         alert("Acción realizada");

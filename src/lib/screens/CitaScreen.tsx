@@ -103,7 +103,7 @@ function CitaScreen() {
 
   const peticionEstilista = async () => {
     try {
-      const response = await axios.get("http://cbinfo.no-ip.info:9089/Trabajador?id=0");
+      const response = await axios.get("https://cbinfo.no-ip.info:9089/Trabajador?id=0");
       const reponseTemporal = response.data;
       const formattedData = reponseTemporal.map((evento: EstilistaResponse) => ({
         ...evento,
@@ -205,7 +205,7 @@ function CitaScreen() {
 
     axios
       .put(
-        `http://cbinfo.no-ip.info:9089/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${
+        `https://cbinfo.no-ip.info:9089/Cita?id=${datosParametros.idCita}&cia=26&sucursal=${
           datosParametros.idSuc
         }&fechaCita=${nuevaFecha}&idCliente=${datosParametros.idClienteSeparada}&tiempo=${
           datosParametros.tiempoSeparada.toString() === "NaN" ? 0 : datosParametros.tiempoSeparada
@@ -251,7 +251,7 @@ function CitaScreen() {
     if (Number(datosParametros.idCita) > 1) {
       try {
         const response = await axios.get(
-          `http://cbinfo.no-ip.info:9089/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
+          `https://cbinfo.no-ip.info:9089/Citaservicio?idcliente=${datosParametros.idClienteSeparada}&fecha=${formattedDate}&sucursal=${datosParametros.idSuc}`
         );
         if (datosParametros.idCitaServicio > 0) {
           const formattedTempCita = [

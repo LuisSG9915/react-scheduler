@@ -106,7 +106,7 @@ function CreateCitaScreen() {
   //   } else {
   //     const response = await axios
   //       .post(
-  //         `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${formattedDate}&idCliente=${dataEvent.idCliente}&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${datosParametros.idRec}&estatus=1`
+  //         `https://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${datosParametros.idSuc}&fechaCita=${formattedDate}&idCliente=${dataEvent.idCliente}&tiempo=0&idEstilista=${datosParametros.idUser}&idUsuario=${datosParametros.idRec}&estatus=1`
   //       )
   //       .then((response) => {
   //         setFormServicio({ ...formServicio, id_Cita: Number(response.data[0].mensaje2) });
@@ -128,7 +128,7 @@ function CreateCitaScreen() {
       try {
         if (formServicio.tiempo > 0) {
           const response = await axios.post(
-            `http://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${
+            `https://cbinfo.no-ip.info:9089/Cita?cia=26&sucursal=${
               datosParametros.idSuc
             }&fechaCita=${temp2 > 0 ? formattedDate : formattedDate}&idCliente=${
               dataEvent.idCliente
@@ -216,7 +216,7 @@ function CreateCitaScreen() {
     const fechaFormateada = format(temporal, "yyyyMMdd");
     try {
       const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089//CitaServicio?idcliente=${dataEvent.idCliente}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
+        `https://cbinfo.no-ip.info:9089//CitaServicio?idcliente=${dataEvent.idCliente}&fecha=${fechaFormateada}&sucursal=${datosParametros.idSuc}`
       );
       setDatasServicios(response.data);
       console.log(response.data);

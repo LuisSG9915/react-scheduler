@@ -105,7 +105,7 @@ function SchedulerScreen() {
 
       try {
         const response = await axios.get(
-          `http://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}&fecha=${format(
+          `https://cbinfo.no-ip.info:9089/Estilistas?suc=${dataEvent.sucursal}&fecha=${format(
             new Date(nuevaFechaPrueba),
             "yyyy-MM-dd"
           )}`
@@ -131,7 +131,7 @@ function SchedulerScreen() {
   const getCitaServicios = async (id: number) => {
     try {
       const response = await axios.get(
-        `http://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=20230727&sucursal=21`
+        `https://cbinfo.no-ip.info:9089/Citaservicio?id=${id}&fecha=20230727&sucursal=21`
       );
       setDatasServicios(response.data);
       console.log(response.data);
@@ -217,7 +217,7 @@ function SchedulerScreen() {
         const formattedDate = format(temp, "yyyyMMdd");
         try {
           const response = axios.get(
-            `http://cbinfo.no-ip.info:9089/Cita?cliente=%&f1=${formattedDate}&suc=${dataEvent.sucursal}`
+            `https://cbinfo.no-ip.info:9089/Cita?cliente=%&f1=${formattedDate}&suc=${dataEvent.sucursal}`
           );
           const formattedData = (await response).data.map((evento: Eventos) => ({
             ...evento,
@@ -289,7 +289,7 @@ function SchedulerScreen() {
 
   const deleteCita = (id: number) => {
     axios
-      .delete(`http://cbinfo.no-ip.info:9089/Cita?id=${id}`)
+      .delete(`https://cbinfo.no-ip.info:9089/Cita?id=${id}`)
       .then((response) => alert("Cita eliminada con éxito"));
   };
 
@@ -314,7 +314,7 @@ function SchedulerScreen() {
     } else {
       axios
         .put(
-          `http://cbinfo.no-ip.info:9089/Cita?id=${cita.event_id}&cia=26&sucursal=${
+          `https://cbinfo.no-ip.info:9089/Cita?id=${cita.event_id}&cia=26&sucursal=${
             dataEvent.sucursal
           }&fechaCita=${format(cita.start, "yyyy-MM-dd HH:mm")}&idCliente=${
             cita.idCliente
@@ -500,7 +500,7 @@ function SchedulerScreen() {
       >
         <HomeIcon
           color={"info"}
-          onClick={() => (window.location.href = "http://cbinfo.no-ip.info:9088/Ventas")}
+          onClick={() => (window.location.href = "https://cbinfo.no-ip.info:9088/Ventas")}
         ></HomeIcon>
         {visualizar ? (
           <>
