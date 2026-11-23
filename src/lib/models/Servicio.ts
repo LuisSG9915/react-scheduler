@@ -10,6 +10,7 @@ export interface Servicio {
   precio: number;
   observaciones: string;
   tiempo: number;
+  productoLibre?: boolean;
   fechaCita: string;
   sucursal: number;
   idCliente: number;
@@ -30,4 +31,5 @@ export interface ServicioPost {
   d_servicio?: string;
   id?: number;
   tiempo?: number;
+  productoLibre?: boolean;
 }
